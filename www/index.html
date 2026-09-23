@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WAGP Mystery Shopping</title>
+  <!-- SheetJS for local Excel generation -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root { --primary: #004d40; --accent: #00796b; --bg: #f4f6f8; --card: #ffffff; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); margin: 0; padding: 12px; color: #222; }
+    .header { background: var(--primary); color: #fff; padding: 14px 16px; border-radius: 10px; margin-bottom: 12px; }
+    .header h2 { margin: 0; font-size: 17px; font-weight: 600; text-align: center; }
+    .header p { margin: 4px 0 0; font-size: 11px; opacity: 0.85; text-align: center; }
+    .card { background: var(--card); padding: 14px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .card h3 { margin: 0 0 10px; font-size: 14px; color: var(--accent); border-bottom: 1px solid #eee; padding-bottom: 6px; }
+    .form-group { margin-bottom: 10px; }
+    label { font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px; color: #333; }
+    input, select { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
+    .q-item { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .q-item:last-child { border-bottom: none; }
+    .q-text { font-size: 12.5px; margin-bottom: 6px; color: #111; line-height: 1.4; }
+    .q-options { display: flex; gap: 10px; }
+    .q-options label { font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-save { background: var(--accent); color: white; margin-bottom: 8px; }
+    .btn-export { background: #1b5e20; color: white; margin-bottom: 8px; }
+    .btn-clear { background: #b71c1c; color: white; }
+    .stats { font-size: 12px; color: #555; text-align: center; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>WAGP Mystery Shopping</h2>
+    <p>Monitoring of Bank Branch</p>
+  </div>
+
+  <form id="wagpForm">
+    <!-- Branch Metadata -->
+    <div class="card">
+      <h3>Branch & Official Info</h3>
+      <div class="form-group">
+        <label>SBP BSC Office</label>
+        <input type="text" id="officeName" placeholder="e.g. Bahawalpur / Karachi" required />
+      </div>
+      <div class="form-group">
+        <label>Name of Official & PIN</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="officialName" placeholder="Name" required />
+          <input type="text" id="pinNo" placeholder="PIN No" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Date of Visit</label>
+        <input type="date" id="visitDate" required />
+      </div>
+      <div class="form-group">
+        <label>Name of Bank</label>
+        <input type="text" id="bankName" placeholder="e.g. HBL, NBP, Meezan" required />
+      </div>
+      <div class="form-group">
+        <label>Branch Name & Code</label>
+        <input type="text" id="branchName" placeholder="e.g. Main Branch (0123)" required />
+      </div>
+      <div class="form-group">
+        <label>Branch Address</label>
+        <input type="text" id="branchAddress" placeholder="Full branch address" required />
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="card">
+      <h3>Section 1: Branch Readiness</h3>
+      <div id="section1"></div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="card">
+      <h3>Section 2: Staff Knowledge</h3>
+      <div id="section2"></div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="card">
+      <h3>Section 3: Customer Service & Behavior</h3>
+      <div id="section3"></div>
+    </div>
+
+    <button type="submit" class="btn btn-save">Save Evaluation Record</button>
+  </form>
+
+  <div class="card">
+    <h3>Saved Audits & Export</h3>
+    <div id="recordCount" class="stats">Stored Records: 0</div>
+    <button type="button" class="btn btn-export" onclick="exportToExcel()">Export to Excel (.xlsx)</button>
+    <button type="button" class="btn btn-clear" onclick="clearData()">Clear All Records</button>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, sec: 1, text: "Are the LAFs available for salaried borrowers?" },
+      { id: 2, sec: 1, text: "Are the LAFs available for formal business borrowers?" },
+      { id: 3, sec: 1, text: "Are the LAFs available for informal income borrowers?" },
+      { id: 4, sec: 1, text: "Either branch itself receiving WAGP applications or referring to designated branch?" },
+      { id: 5, sec: 1, text: "Did referral branch guide correctly about designated branch (if non-designated)?" },
+      { id: 6, sec: 1, text: "Is promotional/marketing material available (brochures, banners, standees, displays)?" },
+      { id: 7, sec: 2, text: "Did the staff know about the WAGP scheme?" },
+      { id: 8, sec: 2, text: "Could the official explain the basic features of the scheme?" },
+      { id: 9, sec: 2, text: "Did the staff know the eligibility criteria for WAGP?" },
+      { id: 10, sec: 2, text: "Did the staff know the required documents for processing an application?" },
+      { id: 11, sec: 2, text: "Did the branch provide timelines for application processing?" },
+      { id: 12, sec: 3, text: "Was branch staff polite/cooperative and guided properly on submission process?" }
+    ];
+
+    // Render questions
+    questions.forEach(q => {
+      const container = document.getElementById("section" + q.sec);
+      const div = document.createElement("div");
+      div.className = "q-item";
+      div.innerHTML = `
+        <div class="q-text"><b>${q.id}.</b> ${q.text}</div>
+        <div class="q-options">
+          <label><input type="radio" name="q_${q.id}" value="Yes" required /> Yes</label>
+          <label><input type="radio" name="q_${q.id}" value="No" required /> No</label>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.getElementById("visitDate").valueAsDate = new Date();
+    updateCounter();
+
+    document.getElementById("wagpForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let ans = {};
+      let totalYes = 0;
+      for (let i = 1; i <= 12; i++) {
+        const val = document.querySelector(`input[name="q_${i}"]:checked`).value;
+        ans[`q_${i}`] = val;
+        if (val === "Yes") totalYes++;
+      }
+
+      // Exact Scoring Engine from SBP Questionnaire
+      let finalRating = totalYes;
+      let assessment = "";
+
+      const anyOneToFiveNo = [1, 2, 3, 4, 5].some(num => ans[`q_${num}`] === "No");
+
+      if (anyOneToFiveNo) {
+        assessment = "Poor";
+      } else {
+        if (totalYes >= 11) {
+          assessment = "Good";
+        } else if (totalYes >= 8) {
+          assessment = "Satisfactory";
+        } else {
+          assessment = "Below Expectations";
+        }
+      }
+
+      const record = {
+        officeName: document.getElementById("officeName").value.trim(),
+        bankName: document.getElementById("bankName").value.trim(),
+        branchName: document.getElementById("branchName").value.trim(),
+        branchAddress: document.getElementById("branchAddress").value.trim(),
+        visitDate: document.getElementById("visitDate").value,
+        finalRating: finalRating,
+        assessment: assessment
+      };
+
+      let history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      history.push(record);
+      localStorage.setItem("wagp_records", JSON.stringify(history));
+
+      alert(`Visit Saved!\nRating: ${finalRating}/12\nAssessment: ${assessment}`);
+      document.getElementById("wagpForm").reset();
+      document.getElementById("visitDate").valueAsDate = new Date();
+      updateCounter();
+    });
+
+    function updateCounter() {
+      const history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      document.getElementById("recordCount").innerText = `Stored Records: ${history.length}`;
+    }
+
+    function exportToExcel() {
+      const history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      if (history.length === 0) {
+        alert("No inspection records to export.");
+        return;
+      }
+
+      // Map directly to your Excel template format
+      const rows = [
+        ["WAGP Mystery Shopping - Reporting Format"],
+        ["Sr. #", "Office Name", "Name of Bank", "Name of Branch", "Branch Address", "Date of Visit", "Final Rating", "Assessment\n(Based on Rating)"]
+      ];
+
+      history.forEach((rec, idx) => {
+        rows.push([
+          idx + 1,
+          rec.officeName,
+          rec.bankName,
+          rec.branchName,
+          rec.branchAddress,
+          rec.visitDate,
+          rec.finalRating,
+          rec.assessment
+        ]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Reporting Format");
+      XLSX.writeFile(wb, "WAGP Mystery Shopping - Reporting Format.xlsx");
+    }
+
+    function clearData() {
+      if (confirm("Are you sure you want to clear saved visits? Ensure you have exported to Excel first.")) {
+        localStorage.removeItem("wagp_records");
+        updateCounter();
+      }
+    }
+  </script>
+</body>
+</html>
