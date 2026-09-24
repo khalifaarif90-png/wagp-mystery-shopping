@@ -127,6 +127,7 @@
     .btn:active { transform: scale(0.98); }
     .btn-submit { background: linear-gradient(135deg, var(--accent), var(--primary-light)); color: #fff; margin-top: 10px; }
     .btn-excel { background: #1b5e20; color: #fff; margin-bottom: 8px; }
+    .btn-clipboard { background: #0277bd; color: #fff; margin-bottom: 8px; }
     .btn-clear { background: #eceff1; color: #455a64; font-weight: 600; }
 
     /* Bank Search Modal */
@@ -255,7 +256,7 @@
       <button type="submit" class="btn btn-submit">Save Branch Audit</button>
     </form>
 
-    <!-- Advanced Multi-Option Excel Export Section -->
+    <!-- Multi-Option Excel Export Section -->
     <div class="card" style="margin-top: 18px;">
       <div class="card-title">Excel Reports & Filters</div>
       <div style="font-size: 12.5px; color: #555; margin-bottom: 12px;" id="recordCounterText">Stored Branch Records: 0</div>
@@ -287,6 +288,7 @@
       </div>
 
       <button type="button" class="btn btn-excel" onclick="handleExcelExport()">Generate Excel Workbook (2 Sheets)</button>
+      <button type="button" class="btn btn-clipboard" onclick="copyRecordsToClipboard()">Copy Summary to Clipboard (Paste in Excel)</button>
       <button type="button" class="btn btn-clear" onclick="clearAllData()">Reset & Clear Saved Records</button>
     </div>
   </div>
@@ -304,7 +306,6 @@
   </div>
 
   <script>
-    // 44 Banks from Attached Bank Names.xlsx
     const banks = [
       "AlBaraka Bank (Pakistan) Limited", "Allied Bank Limited", "Askari Bank Limited",
       "Bank AL Habib Limited", "Bank Alfalah Limited", "BankIslami Pakistan Limited",
@@ -351,7 +352,6 @@
       }, 500);
     }
 
-    // Initialize Questions with Segmented Buttons
     function initQuestions() {
       questions.forEach(q => {
         const container = document.getElementById("section" + q.sec + "Container");
@@ -383,7 +383,6 @@
       updateLiveScore();
     }
 
-    // Live SBP Scoring Engine
     function calculateScore() {
       let totalYes = 0;
       let totalAnswered = 0;
@@ -448,7 +447,6 @@
       }
     }
 
-    // Auto-Save Officer Credentials
     function saveCredentials() {
       const creds = {
         office: document.getElementById("officeName").value,
@@ -465,222 +463,5 @@
       if (saved.pin) document.getElementById("pinNo").value = saved.pin;
     }
 
-    // Searchable Bank Modal
     function openBankModal() {
-      document.getElementById("bankModal").style.display = "flex";
-      renderBankList(banks);
-      document.getElementById("bankSearch").value = "";
-      document.getElementById("bankSearch").focus();
-    }
-    function closeBankModal() { document.getElementById("bankModal").style.display = "none"; }
-    function renderBankList(list) {
-      const container = document.getElementById("bankList");
-      container.innerHTML = "";
-      list.forEach(b => {
-        const item = document.createElement("div");
-        item.className = "bank-item";
-        item.innerText = b;
-        item.onclick = () => selectBank(b);
-        container.appendChild(item);
-      });
-    }
-    function filterBanks() {
-      const term = document.getElementById("bankSearch").value.toLowerCase();
-      const filtered = banks.filter(b => b.toLowerCase().includes(term));
-      renderBankList(filtered);
-    }
-    function selectBank(b) {
-      document.getElementById("bankName").value = b;
-      document.getElementById("selectedBankText").innerText = b;
-      document.getElementById("selectedBankText").style.color = "#212529";
-      closeBankModal();
-    }
-
-    // Form Submission
-    document.getElementById("auditForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      if (!document.getElementById("bankName").value) {
-        alert("Please select a bank from the list.");
-        return;
-      }
-      for (let i = 1; i <= 12; i++) {
-        if (!answers[i]) {
-          alert(`Please answer question #${i}`);
-          return;
-        }
-      }
-
-      const scoreInfo = calculateScore();
-      const newRecord = {
-        officeName: document.getElementById("officeName").value.trim(),
-        officialName: document.getElementById("officialName").value.trim(),
-        pinNo: document.getElementById("pinNo").value.trim(),
-        visitDate: document.getElementById("visitDate").value,
-        bankName: document.getElementById("bankName").value,
-        branchName: document.getElementById("branchName").value.trim(),
-        branchAddress: document.getElementById("branchAddress").value.trim(),
-        finalRating: scoreInfo.rating,
-        assessment: scoreInfo.assessment,
-        answers: { ...answers },
-        timestamp: new Date().getTime()
-      };
-
-      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      records.push(newRecord);
-      localStorage.setItem("wagp_records", JSON.stringify(records));
-
-      alert(`Branch visit saved successfully!\nRating: ${scoreInfo.rating} | Assessment: ${scoreInfo.assessment}`);
-
-      // Reset branch fields & answers, keep officer info
-      document.getElementById("branchName").value = "";
-      document.getElementById("branchAddress").value = "";
-      document.getElementById("bankName").value = "";
-      document.getElementById("selectedBankText").innerText = "Select Bank...";
-      document.getElementById("selectedBankText").style.color = "#757575";
-      answers = {};
-      for (let i = 1; i <= 12; i++) {
-        document.getElementById(`btn_yes_${i}`).className = "pill-btn";
-        document.getElementById(`btn_no_${i}`).className = "pill-btn";
-      }
-      updateLiveScore();
-      updateCounter();
-    });
-
-    function updateCounter() {
-      const records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      document.getElementById("recordCounterText").innerText = `Stored Branch Records: ${records.length}`;
-    }
-
-    function toggleFilterInputs() {
-      const mode = document.getElementById("exportMode").value;
-      document.getElementById("dateRangeBox").style.display = mode === "dateRange" ? "flex" : "none";
-      document.getElementById("lastNBox").style.display = mode === "lastN" ? "block" : "none";
-    }
-
-    // Multi-Filter Excel Generation with 2 Sheets
-    async function handleExcelExport() {
-      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      if (records.length === 0) {
-        alert("No inspection records available to export.");
-        return;
-      }
-
-      const mode = document.getElementById("exportMode").value;
-      let filtered = [...records];
-
-      if (mode === "today") {
-        const todayStr = new Date().toISOString().split("T")[0];
-        filtered = filtered.filter(r => r.visitDate === todayStr);
-      } else if (mode === "dateRange") {
-        const from = document.getElementById("exportFromDate").value;
-        const to = document.getElementById("exportToDate").value;
-        if (from) filtered = filtered.filter(r => r.visitDate >= from);
-        if (to) filtered = filtered.filter(r => r.visitDate <= to);
-      } else if (mode === "lastN") {
-        const n = parseInt(document.getElementById("exportLastNCount").value, 10);
-        if (n && n > 0) filtered = filtered.slice(-n);
-      }
-
-      if (filtered.length === 0) {
-        alert("No records matched the selected export filter.");
-        return;
-      }
-
-      // Sheet 1: Exact Reporting Format
-      const summaryRows = [
-        ["WAGP Mystery Shopping - Reporting Format"],
-        ["Sr. #", "Office Name", "Name of Bank", "Name of Branch", "Branch Address", "Date of Visit", "Final Rating", "Assessment\n(Based on Rating)"]
-      ];
-      filtered.forEach((r, idx) => {
-        summaryRows.push([
-          idx + 1,
-          r.officeName,
-          r.bankName,
-          r.branchName,
-          r.branchAddress,
-          r.visitDate,
-          r.finalRating,
-          r.assessment
-        ]);
-      });
-
-      // Sheet 2: Detailed Responses (All 12 Questions)
-      const detailRows = [
-        ["WAGP Mystery Shopping - Detailed Questionnaire Responses"],
-        [
-          "Sr. #", "Office Name", "Official Name", "PIN No.", "Name of Bank", "Name of Branch", "Branch Address", "Date of Visit",
-          "Q1: Salaried LAF", "Q2: Business LAF", "Q3: Informal LAF", "Q4: Application Handling", "Q5: Referral Guidance",
-          "Q6: Marketing Material", "Q7: Staff Scheme Knowledge", "Q8: Basic Features Explanation", "Q9: Eligibility Knowledge",
-          "Q10: Document Checklist", "Q11: Timelines Provided", "Q12: Polite & Customer Service", "Final Rating", "Assessment"
-        ]
-      ];
-      filtered.forEach((r, idx) => {
-        detailRows.push([
-          idx + 1,
-          r.officeName,
-          r.officialName,
-          r.pinNo,
-          r.bankName,
-          r.branchName,
-          r.branchAddress,
-          r.visitDate,
-          r.answers["1"] || "-", r.answers["2"] || "-", r.answers["3"] || "-", r.answers["4"] || "-",
-          r.answers["5"] || "-", r.answers["6"] || "-", r.answers["7"] || "-", r.answers["8"] || "-",
-          r.answers["9"] || "-", r.answers["10"] || "-", r.answers["11"] || "-", r.answers["12"] || "-",
-          r.finalRating,
-          r.assessment
-        ]);
-      });
-
-      // Create Workbook
-      const wb = XLSX.utils.book_new();
-      const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
-      const ws2 = XLSX.utils.aoa_to_sheet(detailRows);
-      XLSX.utils.book_append_sheet(wb, ws1, "Reporting Format");
-      XLSX.utils.book_append_sheet(wb, ws2, "Detailed Responses");
-
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      const filename = `WAGP_Mystery_Shopping_${new Date().toISOString().split("T")[0]}.xlsx`;
-      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-      // Robust Native Share & Download Trigger for Android
-      try {
-        const file = new File([blob], filename, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: 'WAGP Mystery Shopping Report',
-            text: 'Exported bank monitoring results workbook.'
-          });
-          return;
-        }
-      } catch (err) {
-        console.log("Native share skipped, invoking browser fallback", err);
-      }
-
-      // Classic Browser Fallback
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function clearAllData() {
-      if (confirm("Are you sure you want to permanently clear saved visits? Make sure you have exported to Excel first.")) {
-        localStorage.removeItem("wagp_records");
-        updateCounter();
-      }
-    }
-
-    // App Startup
-    initQuestions();
-    loadCredentials();
-    document.getElementById("visitDate").valueAsDate = new Date();
-    updateCounter();
-  </script>
-</body>
-</html>
+      document.getElementById("bankModal").s
