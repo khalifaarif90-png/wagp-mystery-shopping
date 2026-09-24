@@ -1,432 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>WAGP Mystery Shopping Toolkit</title>
-  <style>
-    :root {
-      --primary: #0a3d34; --primary-light: #126354; --accent: #00897b;
-      --gold: #d4af37; --bg: #f3f6f8; --card-bg: #ffffff; --text: #212529;
-      --danger: #d32f2f; --warning: #f57c00; --success: #2e7d32;
-    }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: var(--bg); margin: 0; padding: 0; color: var(--text); }
-    #splashScreen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
-      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-      padding: 50px 24px 30px; z-index: 99999; text-align: center;
-    }
-    .splash-content { margin-top: 10vh; }
-    .splash-logo-ring {
-      width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 50%;
-      background: rgba(255,255,255,0.08); border: 2px solid var(--gold);
-      display: flex; align-items: center; justify-content: center; font-size: 34px;
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
-    }
-    .splash-title {
-      font-size: 25px; font-weight: 800; line-height: 1.3;
-      background: linear-gradient(45deg, #ffffff, #80e8d4, #ffd700);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
-    }
-    .splash-sub { color: #cfded9; font-size: 15px; font-weight: 500; }
-    .splash-btn {
-      margin-top: 35px; background: linear-gradient(90deg, #00897b, #00bfa5); color: #fff;
-      border: none; padding: 15px 44px; font-size: 16px; font-weight: 700;
-      border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
-    }
-    .splash-footer { margin-bottom: 10px; }
-    .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
-    .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
-    #appContent { padding: 14px; max-width: 600px; margin: 0 auto 80px; }
-    .app-bar {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: #fff; padding: 16px; border-radius: 14px; margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(10,61,52,0.18);
-    }
-    .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
-    .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
-    .live-chip-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 14px; }
-    .live-chip {
-      background: #ffffff; border-radius: 12px; padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-left: 6px solid var(--accent);
-    }
-    .live-score { font-size: 14px; font-weight: 700; }
-    .live-badge {
-      font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-      color: #fff; background: #757575; text-transform: uppercase;
-    }
-    .card {
-      background: var(--card-bg); border-radius: 14px; padding: 15px;
-      margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    .card-title {
-      font-size: 14px; font-weight: 700; color: var(--primary-light);
-      margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .saved-badge { font-size: 10px; background: #e0f2f1; color: var(--accent); padding: 2px 8px; border-radius: 10px; }
-    .field { margin-bottom: 11px; }
-    .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
-    .field input, .field select {
-      width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #dcdcdc;
-      border-radius: 8px; background: #fafafa; outline: none; -webkit-appearance: menulist;
-    }
-    .row-2 { display: flex; gap: 10px; }
-    .row-2 .field { flex: 1; }
-    .q-box { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-    .q-box:last-child { border-bottom: none; }
-    .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
-    .pill-group { display: flex; gap: 10px; }
-    .pill-group input[type="radio"] { display: none; }
-    .pill-label {
-      flex: 1; padding: 10px 0; text-align: center; border-radius: 8px;
-      border: 1.5px solid #dcdcdc; background: #fff; font-size: 13px;
-      font-weight: 700; cursor: pointer; color: #444; display: block;
-    }
-    .pill-group input[value="Yes"]:checked + .pill-label { background: var(--success); color: #fff; border-color: var(--success); }
-    .pill-group input[value="No"]:checked + .pill-label { background: var(--danger); color: #fff; border-color: var(--danger); }
-    .btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
-    .btn-submit { background: linear-gradient(135deg, var(--accent), var(--primary-light)); color: #fff; margin-top: 10px; }
-    .btn-excel { background: #1b5e20; color: #fff; margin-bottom: 8px; }
-    .btn-clipboard { background: #0277bd; color: #fff; margin-bottom: 8px; }
-    .btn-clear { background: #eceff1; color: #455a64; font-weight: 600; }
-  </style>
-</head>
-<body>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>WAGP Mystery Shopping</title>
+<style>
+:root{--p:#0a3d34;--pl:#126354;--ac:#00897b;--g:#d4af37;--bg:#f3f6f8;--dg:#d32f2f;--sc:#2e7d32}
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);margin:0;padding:0;color:#212529}
+#splash{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#042620,#0a3d34,#134e43);display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:50px 24px 30px;z-index:99999;text-align:center}
+.s-ring{width:75px;height:75px;margin:0 auto 16px;border-radius:50%;border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 20px rgba(212,175,55,.4)}
+.s-title{font-size:24px;font-weight:800;background:linear-gradient(45deg,#fff,#80e8d4,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.s-btn{margin-top:30px;background:linear-gradient(90deg,#00897b,#00bfa5);color:#fff;border:none;padding:14px 40px;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer}
+#app{padding:14px;max-width:600px;margin:0 auto 80px}
+.app-bar{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:14px;border-radius:12px;margin-bottom:12px}
+.app-bar h1{margin:0;font-size:16px}.app-bar p{margin:2px 0 0;font-size:11px;opacity:.85}
+.chip-bar{position:sticky;top:8px;z-index:100;margin-bottom:12px}
+.chip{background:#fff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 10px rgba(0,0,0,.1);border-left:5px solid var(--ac)}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 5px rgba(0,0,0,.05)}
+.card-t{font-size:13px;font-weight:700;color:var(--pl);margin-bottom:10px;display:flex;justify-content:space-between}
+.fld{margin-bottom:10px}.fld label{display:block;font-size:11px;font-weight:600;margin-bottom:3px;color:#444}
+.fld input,.fld select{width:100%;padding:9px 11px;font-size:13px;border:1.5px solid #dcdcdc;border-radius:7px;background:#fafafa;outline:none}
+.r2{display:flex;gap:8px}.r2 .fld{flex:1}
+.q-box{padding:10px 0;border-bottom:1px solid #f0f0f0}.q-box:last-child{border-bottom:none}
+.q-title{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:6px}
+.p-grp{display:flex;gap:8px}.p-grp input{display:none}
+.p-lbl{flex:1;padding:8px 0;text-align:center;border-radius:7px;border:1.5px solid #dcdcdc;background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;color:#444}
+.p-grp input[value="Yes"]:checked+.p-lbl{background:var(--sc);color:#fff;border-color:var(--sc)}
+.p-grp input[value="No"]:checked+.p-lbl{background:var(--dg);color:#fff;border-color:var(--dg)}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.btn-sub{background:linear-gradient(135deg,var(--ac),var(--pl));color:#fff;margin-top:8px}
+.btn-wa{background:#25d366;color:#fff}.btn-vw{background:#1976d2;color:#fff}.btn-cp{background:#00897b;color:#fff}.btn-cl{background:#eceff1;color:#455a64}
+#rmodal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:999999;padding:14px;overflow-y:auto}
+.mbox{background:#fff;border-radius:10px;padding:14px;max-width:600px;margin:20px auto}
+table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:8px}th,td{border:1px solid #ccc;padding:5px;text-align:left}th{background:#e0f2f1}
+</style></head><body>
 
-  <div id="splashScreen">
-    <div class="splash-content">
-      <div class="splash-logo-ring">🏛️</div>
-      <div class="splash-title">Mystery Shopping<br/>Toolkit</div>
-      <div class="splash-sub">SBP BSC Bahawalpur</div>
-      <button type="button" class="splash-btn" onclick="enterApp()">Start Evaluation ➔</button>
-    </div>
-    <div class="splash-footer">
-      <p>Prepared & Designed by</p>
-      <h4>Muhammad Arif Gondal</h4>
-    </div>
-  </div>
+<div id="splash"><div style="margin-top:10vh"><div class="s-ring">🏛️</div><div class="s-title">Mystery Shopping<br/>Toolkit</div><div style="color:#cfded9;font-size:14px;margin-top:4px">SBP BSC Bahawalpur</div><button type="button" class="s-btn" onclick="enterApp()">Start Evaluation ➔</button></div><div><p style="color:rgba(255,255,255,.6);font-size:11px;margin:0 0 2px">Prepared & Designed by</p><h4 style="color:var(--g);font-size:15px;margin:0;letter-spacing:.5px">Muhammad Arif Gondal</h4></div></div>
 
-  <div id="appContent">
-    <div class="app-bar">
-      <h1>WAGP Mystery Shopping</h1>
-      <p>Bank Branch Monitoring & Assessment System</p>
-    </div>
+<div id="app"><div class="app-bar"><h1>WAGP Mystery Shopping</h1><p>Bank Branch Monitoring & Assessment System</p></div>
+<div class="chip-bar"><div class="chip"><div><div style="font-size:13.5px;font-weight:700" id="scText">Score: 0 / 12 Yes</div><span style="font-size:10px;color:#666" id="scNote">Answer all questions</span></div><div id="scBadge" style="font-size:11px;font-weight:700;padding:4px 9px;border-radius:15px;color:#fff;background:#757575">Pending</div></div></div>
 
-    <div class="live-chip-container">
-      <div class="live-chip">
-        <div>
-          <div class="live-score" id="liveScoreText">Score: 0 / 12 Yes</div>
-          <span style="font-size: 10.5px; color: #666;" id="liveStatusNote">Answer all questions</span>
-        </div>
-        <div class="live-badge" id="liveBadge">Pending</div>
-      </div>
-    </div>
+<form id="aForm" onsubmit="return handleFormSubmit(event)">
+<div class="card"><div class="card-t"><span>Officer Credentials</span><span style="font-size:10px;background:#e0f2f1;color:var(--ac);padding:2px 6px;border-radius:8px">Auto-Saved</span></div>
+<div class="fld"><label>SBP BSC Office</label><input type="text" id="off" placeholder="Bahawalpur" required oninput="saveCreds()"/></div>
+<div class="r2"><div class="fld"><label>Name of Official</label><input type="text" id="offName" placeholder="Name" required oninput="saveCreds()"/></div><div class="fld"><label>PIN No.</label><input type="text" id="pin" placeholder="PIN" required oninput="saveCreds()"/></div></div></div>
 
-    <form id="auditForm" onsubmit="return handleFormSubmit(event)">
-      <div class="card">
-        <div class="card-title"><span>Officer Credentials</span><span class="saved-badge">Auto-Saved</span></div>
-        <div class="field"><label>SBP BSC Office</label><input type="text" id="officeName" placeholder="e.g. Bahawalpur" required oninput="saveCredentials()" /></div>
-        <div class="row-2">
-          <div class="field"><label>Name of Official</label><input type="text" id="officialName" placeholder="Official Name" required oninput="saveCredentials()" /></div>
-          <div class="field"><label>PIN No.</label><input type="text" id="pinNo" placeholder="PIN" required oninput="saveCredentials()" /></div>
-        </div>
-      </div>
+<div class="card"><div class="card-t">Branch Under Inspection</div>
+<div class="fld"><label>Date of Visit</label><input type="date" id="vDate" required/></div>
+<div class="fld"><label>Name of Bank</label><select id="bName" required><option value="">-- Select Bank --</option></select></div>
+<div class="fld"><label>Branch Name & Code</label><input type="text" id="brName" placeholder="e.g. Model Town Branch (0123)" required/></div>
+<div class="fld"><label>Branch Address</label><input type="text" id="brAddr" placeholder="Location / Road" required/></div></div>
 
-      <div class="card">
-        <div class="card-title">Branch Under Inspection</div>
-        <div class="field"><label>Date of Visit</label><input type="date" id="visitDate" required /></div>
-        <div class="field"><label>Name of Bank</label>
-          <select id="bankName" required>
-            <option value="">-- Tap to Select Bank --</option>
-            <option value="Advans Pakistan Microfinance Bank Limited">Advans Pakistan Microfinance Bank Limited</option>
-            <option value="AlBaraka Bank (Pakistan) Limited">AlBaraka Bank (Pakistan) Limited</option>
-            <option value="Allied Bank Limited">Allied Bank Limited</option>
-            <option value="Apna Microfinance Bank Limited">Apna Microfinance Bank Limited</option>
-            <option value="Askari Bank Limited">Askari Bank Limited</option>
-            <option value="Bank AL Habib Limited">Bank AL Habib Limited</option>
-            <option value="Bank Alfalah Limited">Bank Alfalah Limited</option>
-            <option value="Bank of China Limited">Bank of China Limited</option>
-            <option value="Bank Makramah Limited">Bank Makramah Limited</option>
-            <option value="BankIslami Pakistan Limited">BankIslami Pakistan Limited</option>
-            <option value="Citibank N.A.">Citibank N.A.</option>
-            <option value="Deutsche Bank AG">Deutsche Bank AG</option>
-            <option value="Dubai Islamic Bank Pakistan Limited">Dubai Islamic Bank Pakistan Limited</option>
-            <option value="Easypaisa Digital Bank Limited">Easypaisa Digital Bank Limited</option>
-            <option value="Faysal Bank Limited">Faysal Bank Limited</option>
-            <option value="FINCA Microfinance Bank Limited">FINCA Microfinance Bank Limited</option>
-            <option value="First Women Bank Limited">First Women Bank Limited</option>
-            <option value="Habib Bank Limited">Habib Bank Limited</option>
-            <option value="Habib Metropolitan Bank Limited">Habib Metropolitan Bank Limited</option>
-            <option value="HBL Microfinance Bank Limited">HBL Microfinance Bank Limited</option>
-            <option value="Industrial and Commercial Bank of China Limited">Industrial and Commercial Bank of China Limited</option>
-            <option value="JS Bank Limited">JS Bank Limited</option>
-            <option value="Khushhali Microfinance Bank Limited">Khushhali Microfinance Bank Limited</option>
-            <option value="Mashreq Digital Bank Limited">Mashreq Digital Bank Limited</option>
-            <option value="MCB Bank Limited">MCB Bank Limited</option>
-            <option value="MCB Islamic Bank Limited">MCB Islamic Bank Limited</option>
-            <option value="Meezan Bank Limited">Meezan Bank Limited</option>
-            <option value="Mobilink Microfinance Bank Limited">Mobilink Microfinance Bank Limited</option>
-            <option value="National Bank of Pakistan">National Bank of Pakistan</option>
-            <option value="NRSP Microfinance Bank Limited">NRSP Microfinance Bank Limited</option>
-            <option value="Pak Oman Microfinance Bank Limited">Pak Oman Microfinance Bank Limited</option>
-            <option value="Punjab Provincial Co-operative Bank Limited">Punjab Provincial Co-operative Bank Limited</option>
-            <option value="SAMBA Bank Limited">SAMBA Bank Limited</option>
-            <option value="Silkbank Limited">Silkbank Limited</option>
-            <option value="Sindh Bank Limited">Sindh Bank Limited</option>
-            <option value="Sindh Microfinance Bank Limited">Sindh Microfinance Bank Limited</option>
-            <option value="Soneri Bank Limited">Soneri Bank Limited</option>
-            <option value="Standard Chartered Bank (Pakistan) Limited">Standard Chartered Bank (Pakistan) Limited</option>
-            <option value="Telenor Microfinance Bank Limited">Telenor Microfinance Bank Limited</option>
-            <option value="The Bank of Khyber">The Bank of Khyber</option>
-            <option value="The Bank of Punjab">The Bank of Punjab</option>
-            <option value="U Microfinance Bank Limited">U Microfinance Bank Limited</option>
-            <option value="United Bank Limited">United Bank Limited</option>
-            <option value="Zarai Taraqiati Bank Limited">Zarai Taraqiati Bank Limited</option>
-          </select>
-        </div>
-        <div class="field"><label>Branch Name & Code</label><input type="text" id="branchName" placeholder="e.g. Model Town Branch (0123)" required /></div>
-        <div class="field"><label>Branch Address</label><input type="text" id="branchAddress" placeholder="Physical location / Road" required /></div>
-      </div>
+<div class="card"><div class="card-t">Section 1: Branch Readiness</div><div id="sec1"></div></div>
+<div class="card"><div class="card-t">Section 2: Staff Knowledge</div><div id="sec2"></div></div>
+<div class="card"><div class="card-t">Section 3: Customer Service & Behavior</div><div id="sec3"></div></div>
+<button type="submit" class="btn btn-sub">Save Branch Audit</button></form>
 
-      <div class="card">
-        <div class="card-title">Section 1: Branch Readiness</div>
-        <div class="q-box"><div class="q-title"><b>1.</b> Are the Loan Application Forms (LAFs) available for salaried borrowers?</div><div class="pill-group"><input type="radio" id="q1_yes" name="q_1" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q1_yes">✓ Yes</label><input type="radio" id="q1_no" name="q_1" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q1_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>2.</b> Are the LAFs available for formal business borrowers?</div><div class="pill-group"><input type="radio" id="q2_yes" name="q_2" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q2_yes">✓ Yes</label><input type="radio" id="q2_no" name="q_2" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q2_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>3.</b> Are the LAFs available for informal income borrowers?</div><div class="pill-group"><input type="radio" id="q3_yes" name="q_3" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q3_yes">✓ Yes</label><input type="radio" id="q3_no" name="q_3" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q3_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>4.</b> Either branch itself receiving WAGP applications or referring to designated branch?</div><div class="pill-group"><input type="radio" id="q4_yes" name="q_4" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q4_yes">✓ Yes</label><input type="radio" id="q4_no" name="q_4" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q4_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>5.</b> Did referral branch guide correctly about designated branch (if non-designated)?</div><div class="pill-group"><input type="radio" id="q5_yes" name="q_5" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q5_yes">✓ Yes</label><input type="radio" id="q5_no" name="q_5" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q5_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>6.</b> Is promotional/marketing material available (brochures, banners, standees, displays)?</div><div class="pill-group"><input type="radio" id="q6_yes" name="q_6" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q6_yes">✓ Yes</label><input type="radio" id="q6_no" name="q_6" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q6_no">✕ No</label></div></div>
-      </div>
+<div class="card" style="margin-top:14px"><div class="card-t">Reports & Filters</div>
+<div style="font-size:12px;color:#555;margin-bottom:10px" id="recCnt">Stored Branch Records: 0</div>
+<div class="fld"><label>Export Filter</label><select id="eMode" onchange="toggleFilter()"><option value="all">All Saved Records</option><option value="today">Today's Visits Only</option><option value="dateRange">Custom Date Range</option><option value="lastN">Last N Visits</option></select></div>
+<div id="drBox" style="display:none" class="r2"><div class="fld"><label>From</label><input type="date" id="fDate"/></div><div class="fld"><label>To</label><input type="date" id="tDate"/></div></div>
+<div id="nBox" style="display:none" class="fld"><label>Recent Count</label><input type="number" id="nCount" placeholder="5" min="1"/></div>
+<button type="button" class="btn btn-wa" onclick="shareWA()">📱 Share Summary via WhatsApp</button>
+<button type="button" class="btn btn-vw" onclick="openViewer()">📄 View / Print Report Table</button>
+<button type="button" class="btn btn-cp" onclick="copyClip()">📋 Copy Summary (Paste in Excel)</button>
+<button type="button" class="btn btn-cl" onclick="clearData()">Reset & Clear Saved Records</button></div></div>
 
-      <div class="card">
-        <div class="card-title">Section 2: Staff Knowledge</div>
-        <div class="q-box"><div class="q-title"><b>7.</b> Did the staff know about the WAGP scheme?</div><div class="pill-group"><input type="radio" id="q7_yes" name="q_7" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q7_yes">✓ Yes</label><input type="radio" id="q7_no" name="q_7" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q7_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>8.</b> Could the official explain the basic features of the scheme?</div><div class="pill-group"><input type="radio" id="q8_yes" name="q_8" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q8_yes">✓ Yes</label><input type="radio" id="q8_no" name="q_8" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q8_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>9.</b> Did the staff know the eligibility criteria for WAGP?</div><div class="pill-group"><input type="radio" id="q9_yes" name="q_9" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q9_yes">✓ Yes</label><input type="radio" id="q9_no" name="q_9" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q9_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>10.</b> Did the staff know the required documents for processing an application?</div><div class="pill-group"><input type="radio" id="q10_yes" name="q_10" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q10_yes">✓ Yes</label><input type="radio" id="q10_no" name="q_10" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q10_no">✕ No</label></div></div>
-        <div class="q-box"><div class="q-title"><b>11.</b> Did the branch provide timelines for application processing?</div><div class="pill-group"><input type="radio" id="q11_yes" name="q_11" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q11_yes">✓ Yes</label><input type="radio" id="q11_no" name="q_11" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q11_no">✕ No</label></div></div>
-      </div>
+<div id="rmodal"><div class="mbox"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h3 style="margin:0;font-size:14px;color:var(--p)">WAGP Inspection Report</h3><button style="border:none;background:#eee;padding:4px 10px;border-radius:5px;font-weight:700" onclick="closeViewer()">✕ Close</button></div><div style="overflow-x:auto" id="tbCont"></div></div></div>
 
-      <div class="card">
-        <div class="card-title">Section 3: Customer Service & Behavior</div>
-        <div class="q-box"><div class="q-title"><b>12.</b> Was branch staff polite, cooperative, and guided properly?</div><div class="pill-group"><input type="radio" id="q12_yes" name="q_12" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q12_yes">✓ Yes</label><input type="radio" id="q12_no" name="q_12" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q12_no">✕ No</label></div></div>
-      </div>
+<script>
+const banks=["AlBaraka Bank (Pakistan) Limited","Allied Bank Limited","Askari Bank Limited","Bank AL Habib Limited","Bank Alfalah Limited","BankIslami Pakistan Limited","Dubai Islamic Bank Pakistan Limited","Faysal Bank Limited","First Women Bank Limited","Habib Bank Limited","Habib Metropolitan Bank Limited","JS Bank Limited","MCB Bank Limited","MCB Islamic Bank Limited","Meezan Bank Limited","National Bank of Pakistan","SAMBA Bank Limited","Silkbank Limited","Sindh Bank Limited","Soneri Bank Limited","Standard Chartered Bank (Pakistan) Limited","The Bank of Khyber","The Bank of Punjab","United Bank Limited","Bank Makramah Limited","Citibank N.A.","Deutsche Bank AG","Industrial and Commercial Bank of China Limited","Bank of China Limited","Punjab Provincial Co-operative Bank Limited","Zarai Taraqiati Bank Limited","Easypaisa Digital Bank Limited","Mashreq Digital Bank Limited","Apna Microfinance Bank Limited","Advans Pakistan Microfinance Bank Limited","FINCA Microfinance Bank Limited","HBL Microfinance Bank Limited","Khushhali Microfinance Bank Limited","Mobilink Microfinance Bank Limited","NRSP Microfinance Bank Limited","Pak Oman Microfinance Bank Limited","Sindh Microfinance Bank Limited","Telenor Microfinance Bank Limited","U Microfinance Bank Limited"];
+const qs=[{id:1,s:1,t:"Are LAFs available for salaried borrowers?"},{id:2,s:1,t:"Are LAFs available for formal business borrowers?"},{id:3,s:1,t:"Are LAFs available for informal income borrowers?"},{id:4,s:1,t:"Either receiving applications or referring to designated branch?"},{id:5,s:1,t:"Did referral branch guide correctly about designated branch?"},{id:6,s:1,t:"Is promotional/marketing material available (brochures, displays)?"},{id:7,s:2,t:"Did staff know about the WAGP scheme?"},{id:8,s:2,t:"Could official explain basic features of the scheme?"},{id:9,s:2,t:"Did staff know eligibility criteria for WAGP?"},{id:10,s:2,t:"Did staff know required documents for processing?"},{id:11,s:2,t:"Did branch provide timelines for application processing?"},{id:12,s:3,t:"Was branch staff polite, cooperative, and guided properly?"}];
 
-      <button type="submit" class="btn btn-submit">Save Branch Audit</button>
-    </form>    <div class="card" style="margin-top: 18px;">
-      <div class="card-title">Excel Reports & Filters</div>
-      <div style="font-size: 12.5px; color: #555; margin-bottom: 12px;" id="recordCounterText">Stored Branch Records: 0</div>
+function enterApp(){sessionStorage.setItem("w_ent","1");document.getElementById("splash").style.display="none"}
+if(sessionStorage.getItem("w_ent")==="1")document.getElementById("splash").style.display="none";
 
-      <div class="field">
-        <label>Export Filter Mode</label>
-        <select id="exportMode" onchange="toggleFilterInputs()">
-          <option value="all">Export All Saved Records</option>
-          <option value="today">Export Today's Visits Only</option>
-          <option value="dateRange">Export Custom Date Range</option>
-          <option value="lastN">Export Last N Visits</option>
-        </select>
-      </div>
+const bSel=document.getElementById("bName");banks.forEach(b=>{let o=document.createElement("option");o.value=b;o.text=b;bSel.add(o);});
+qs.forEach(q=>{
+  let d=document.createElement("div");d.className="q-box";
+  d.innerHTML=`<div class="q-title"><b>${q.id}.</b> ${q.t}</div><div class="p-grp"><input type="radio" id="q${q.id}y" name="q_${q.id}" value="Yes" onchange="calc()" required><label class="p-lbl" for="q${q.id}y">✓ Yes</label><input type="radio" id="q${q.id}n" name="q_${q.id}" value="No" onchange="calc()" required><label class="p-lbl" for="q${q.id}n">✕ No</label></div>`;
+  document.getElementById("sec"+q.s).appendChild(d);
+});
 
-      <div id="dateRangeBox" style="display: none;" class="row-2">
-        <div class="field"><label>From Date</label><input type="date" id="exportFromDate" /></div>
-        <div class="field"><label>To Date</label><input type="date" id="exportToDate" /></div>
-      </div>
+function calc(){
+  let y=0,ans=0,f=false;
+  for(let i=1;i<=12;i++){let c=document.querySelector(`input[name="q_${i}"]:checked`);if(c){ans++;if(c.value==="Yes")y++;else if(i<=5)f=true;}}
+  let as="Pending",bg="#757575";
+  if(f){as="Poor";bg="var(--dg)"}else if(ans===12){as=y>=11?"Good":(y>=8?"Satisfactory":"Below Expectations");bg=y>=11?"var(--sc)":(y>=8?"var(--ac)":"#f57c00")}else if(ans>0){as="In Progress";bg="#0288d1"}
+  document.getElementById("scText").innerText=`Score: ${y} / 12 Yes`;
+  let b=document.getElementById("scBadge");b.innerText=as;b.style.backgroundColor=bg;
+  document.getElementById("scNote").innerText=f?"Fatal: 'No' in Q1-Q5 triggers Poor Rating":(ans<12?`${12-ans} remaining`:"Completed");
+  return{y,ans,f,as};
+}
 
-      <div id="lastNBox" style="display: none;" class="field">
-        <label>Number of Recent Visits</label>
-        <input type="number" id="exportLastNCount" placeholder="e.g. 5" min="1" />
-      </div>
+function saveCreds(){localStorage.setItem("w_cr",JSON.stringify({o:document.getElementById("off").value,n:document.getElementById("offName").value,p:document.getElementById("pin").value}))}
+function loadCreds(){let s=JSON.parse(localStorage.getItem("w_cr")||"{}");if(s.o)document.getElementById("off").value=s.o;if(s.n)document.getElementById("offName").value=s.n;if(s.p)document.getElementById("pin").value=s.p;}
 
-      <button type="button" class="btn btn-excel" onclick="exportExcelFile()">Download / Share Excel File (.xls)</button>
-      <button type="button" class="btn btn-clipboard" onclick="copyRecordsToClipboard()">Copy Summary to Clipboard (Paste in Excel)</button>
-      <button type="button" class="btn btn-clear" onclick="clearAllData()">Reset & Clear Saved Records</button>
-    </div>
-  </div>
+function handleFormSubmit(e){
+  e.preventDefault();let b=bSel.value;if(!b){alert("Select bank");return false;}
+  let uA={};for(let i=1;i<=12;i++){let c=document.querySelector(`input[name="q_${i}"]:checked`);if(!c){alert("Answer Q#"+i);return false;}uA[i]=c.value;}
+  let sc=calc();let r=JSON.parse(localStorage.getItem("w_recs")||"[]");
+  r.push({off:document.getElementById("off").value.trim(),n:document.getElementById("offName").value.trim(),p:document.getElementById("pin").value.trim(),d:document.getElementById("vDate").value,b,br:document.getElementById("brName").value.trim(),ad:document.getElementById("brAddr").value.trim(),rt:sc.y,as:sc.as,a:uA});
+  localStorage.setItem("w_recs",JSON.stringify(r));
+  alert(`Saved! Rating: ${sc.y} | Assessment: ${sc.as}`);
+  document.getElementById("brName").value="";document.getElementById("brAddr").value="";bSel.selectedIndex=0;
+  for(let i=1;i<=12;i++){let c=document.querySelector(`input[name="q_${i}"]:checked`);if(c)c.checked=false;}
+  calc();updateCnt();return false;
+}
 
-  <script>
-    function enterApp() {
-      sessionStorage.setItem("wagp_entered", "true");
-      const splash = document.getElementById("splashScreen");
-      if (splash) splash.style.display = "none";
-    }
+function updateCnt(){document.getElementById("recCnt").innerText="Stored Branch Records: "+JSON.parse(localStorage.getItem("w_recs")||"[]").length;}
+function toggleFilter(){let m=document.getElementById("eMode").value;document.getElementById("drBox").style.display=m==="dateRange"?"flex":"none";document.getElementById("nBox").style.display=m==="lastN"?"block":"none";}
+function getFiltered(){
+  let r=JSON.parse(localStorage.getItem("w_recs")||"[]"),m=document.getElementById("eMode").value;
+  if(m==="today")r=r.filter(x=>x.d===new Date().toISOString().split("T")[0]);
+  else if(m==="dateRange"){let f=document.getElementById("fDate").value,t=document.getElementById("tDate").value;if(f)r=r.filter(x=>x.d>=f);if(t)r=r.filter(x=>x.d<=t);}
+  else if(m==="lastN"){let n=parseInt(document.getElementById("nCount").value,10);if(n>0)r=r.slice(-n);}
+  return r;
+}
 
-    if (sessionStorage.getItem("wagp_entered") === "true") {
-      const splash = document.getElementById("splashScreen");
-      if (splash) splash.style.display = "none";
-    }
+function shareWA(){
+  let f=getFiltered();if(!f.length){alert("No records");return;}
+  let m="*WAGP Mystery Shopping Report - SBP BSC Bahawalpur*\n\n";
+  f.forEach((x,i)=>{m+=`*${i+1}. ${x.b}* (${x.br})\nDate: ${x.d} | Rating: ${x.rt}/12\nAssessment: *${x.as}*\n\n`;});
+  window.open("https://api.whatsapp.com/send?text="+encodeURIComponent(m),"_system");
+}
 
-    function calculateScore() {
-      let totalYes = 0, totalAnswered = 0, fatalNo = false;
-      for (let i = 1; i <= 12; i++) {
-        const checked = document.querySelector('input[name="q_' + i + '"]:checked');
-        if (checked) {
-          totalAnswered++;
-          if (checked.value === 'Yes') totalYes++;
-          else if (i <= 5) fatalNo = true;
-        }
-      }
-      let rating = totalYes, assessment = "Pending", badgeColor = "#757575";
-      if (fatalNo) { assessment = "Poor"; badgeColor = "var(--danger)"; }
-      else if (totalAnswered === 12) {
-        if (rating >= 11) { assessment = "Good"; badgeColor = "var(--success)"; }
-        else if (rating >= 8) { assessment = "Satisfactory"; badgeColor = "var(--accent)"; }
-        else { assessment = "Below Expectations"; badgeColor = "var(--warning)"; }
-      } else if (totalAnswered > 0) { assessment = "In Progress"; badgeColor = "#0288d1"; }
-      return { totalYes, totalAnswered, fatalNo, rating, assessment, badgeColor };
-    }
+function openViewer(){
+  let f=getFiltered();if(!f.length){alert("No records");return;}
+  let h='<table><tr><th>Sr#</th><th>Bank</th><th>Branch</th><th>Date</th><th>Score</th><th>Assessment</th></tr>';
+  f.forEach((x,i)=>{h+=`<tr><td>${i+1}</td><td>${x.b}</td><td>${x.br}</td><td>${x.d}</td><td><b>${x.rt}</b></td><td><b>${x.as}</b></td></tr>`;});
+  document.getElementById("tbCont").innerHTML=h+'</table>';document.getElementById("rmodal").style.display="block";
+}
+function closeViewer(){document.getElementById("rmodal").style.display="none"}
 
-    function updateLiveScore() {
-      const s = calculateScore();
-      document.getElementById("liveScoreText").innerText = "Score: " + s.rating + " / 12 Yes";
-      const badge = document.getElementById("liveBadge");
-      badge.innerText = s.assessment;
-      badge.style.backgroundColor = s.badgeColor;
-      const note = document.getElementById("liveStatusNote");
-      if (s.fatalNo) { note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating"; note.style.color = "var(--danger)"; }
-      else if (s.totalAnswered < 12) { note.innerText = (12 - s.totalAnswered) + " questions remaining"; note.style.color = "#666"; }
-      else { note.innerText = "All questions evaluated"; note.style.color = "var(--success)"; }
-    }
+function copyClip(){
+  let f=getFiltered();if(!f.length){alert("No records");return;}
+  let t="Sr.#\tOffice\tBank\tBranch\tAddress\tDate\tRating\tAssessment\n";
+  f.forEach((x,i)=>{t+=`${i+1}\t${x.off}\t${x.b}\t${x.br}\t${x.ad}\t${x.d}\t${x.rt}\t${x.as}\n`;});
+  navigator.clipboard.writeText(t).then(()=>alert("Copied to clipboard! Open Excel & Paste."));
+}
 
-    function saveCredentials() {
-      localStorage.setItem("wagp_creds", JSON.stringify({
-        office: document.getElementById("officeName").value,
-        name: document.getElementById("officialName").value,
-        pin: document.getElementById("pinNo").value
-      }));
-    }
-
-    function loadCredentials() {
-      const saved = JSON.parse(localStorage.getItem("wagp_creds") || "{}");
-      if (saved.office) document.getElementById("officeName").value = saved.office;
-      if (saved.name) document.getElementById("officialName").value = saved.name;
-      if (saved.pin) document.getElementById("pinNo").value = saved.pin;
-    }
-
-    function handleFormSubmit(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      const selectedBank = document.getElementById("bankName").value;
-      if (!selectedBank) { alert("Please select a bank from dropdown."); return false; }
-      let userAnswers = {};
-      for (let i = 1; i <= 12; i++) {
-        const checked = document.querySelector('input[name="q_' + i + '"]:checked');
-        if (!checked) { alert("Please answer question #" + i); return false; }
-        userAnswers[i] = checked.value;
-      }
-      const scoreInfo = calculateScore();
-      const newRecord = {
-        officeName: document.getElementById("officeName").value.trim(),
-        officialName: document.getElementById("officialName").value.trim(),
-        pinNo: document.getElementById("pinNo").value.trim(),
-        visitDate: document.getElementById("visitDate").value,
-        bankName: selectedBank,
-        branchName: document.getElementById("branchName").value.trim(),
-        branchAddress: document.getElementById("branchAddress").value.trim(),
-        finalRating: scoreInfo.rating,
-        assessment: scoreInfo.assessment,
-        answers: userAnswers,
-        timestamp: new Date().getTime()
-      };
-      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      records.push(newRecord);
-      localStorage.setItem("wagp_records", JSON.stringify(records));
-      alert("Branch visit saved!\nRating: " + scoreInfo.rating + " | Assessment: " + scoreInfo.assessment);
-      document.getElementById("branchName").value = "";
-      document.getElementById("branchAddress").value = "";
-      document.getElementById("bankName").selectedIndex = 0;
-      for (let i = 1; i <= 12; i++) {
-        const checked = document.querySelector('input[name="q_' + i + '"]:checked');
-        if (checked) checked.checked = false;
-      }
-      updateLiveScore();
-      updateCounter();
-      return false;
-    }
-
-    function updateCounter() {
-      const records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      document.getElementById("recordCounterText").innerText = "Stored Branch Records: " + records.length;
-    }
-
-    function toggleFilterInputs() {
-      const mode = document.getElementById("exportMode").value;
-      document.getElementById("dateRangeBox").style.display = (mode === "dateRange") ? "flex" : "none";
-      document.getElementById("lastNBox").style.display = (mode === "lastN") ? "block" : "none";
-    }
-
-    function getFilteredRecords() {
-      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      const mode = document.getElementById("exportMode").value;
-      let filtered = [...records];
-      if (mode === "today") {
-        const todayStr = new Date().toISOString().split("T")[0];
-        filtered = filtered.filter(r => r.visitDate === todayStr);
-      } else if (mode === "dateRange") {
-        const from = document.getElementById("exportFromDate").value;
-        const to = document.getElementById("exportToDate").value;
-        if (from) filtered = filtered.filter(r => r.visitDate >= from);
-        if (to) filtered = filtered.filter(r => r.visitDate <= to);
-      } else if (mode === "lastN") {
-        const n = parseInt(document.getElementById("exportLastNCount").value, 10);
-        if (n && n > 0) filtered = filtered.slice(-n);
-      }
-      return filtered;
-    }
-
-    async function exportExcelFile() {
-      const filtered = getFilteredRecords();
-      if (filtered.length === 0) { alert("No inspection records to export."); return; }
-      let xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
-      xml += '<Worksheet ss:Name="Reporting Format"><Table><Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Reporting Format</Data></Cell></Row><Row><Cell><Data ss:Type="String">Sr. #</Data></Cell><Cell><Data ss:Type="String">Office Name</Data></Cell><Cell><Data ss:Type="String">Name of Bank</Data></Cell><Cell><Data ss:Type="String">Name of Branch</Data></Cell><Cell><Data ss:Type="String">Branch Address</Data></Cell><Cell><Data ss:Type="String">Date of Visit</Data></Cell><Cell><Data ss:Type="String">Final Rating</Data></Cell><Cell><Data ss:Type="String">Assessment (Based on Rating)</Data></Cell></Row>';
-      filtered.forEach((r, idx) => {
-        xml += '<Row><Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell><Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell></Row>';
-      });
-      xml += '</Table></Worksheet>';
-      xml += '<Worksheet ss:Name="Detailed Responses"><Table><Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Detailed Responses</Data></Cell></Row><Row><Cell><Data ss:Type="String">Sr. #</Data></Cell><Cell><Data ss:Type="String">Office Name</Data></Cell><Cell><Data ss:Type="String">Official Name</Data></Cell><Cell><Data ss:Type="String">PIN No.</Data></Cell><Cell><Data ss:Type="String">Name of Bank</Data></Cell><Cell><Data ss:Type="String">Name of Branch</Data></Cell><Cell><Data ss:Type="String">Branch Address</Data></Cell><Cell><Data ss:Type="String">Date of Visit</Data></Cell><Cell><Data ss:Type="String">Q1</Data></Cell><Cell><Data ss:Type="String">Q2</Data></Cell><Cell><Data ss:Type="String">Q3</Data></Cell><Cell><Data ss:Type="String">Q4</Data></Cell><Cell><Data ss:Type="String">Q5</Data></Cell><Cell><Data ss:Type="String">Q6</Data></Cell><Cell><Data ss:Type="String">Q7</Data></Cell><Cell><Data ss:Type="String">Q8</Data></Cell><Cell><Data ss:Type="String">Q9</Data></Cell><Cell><Data ss:Type="String">Q10</Data></Cell><Cell><Data ss:Type="String">Q11</Data></Cell><Cell><Data ss:Type="String">Q12</Data></Cell><Cell><Data ss:Type="String">Final Rating</Data></Cell><Cell><Data ss:Type="String">Assessment</Data></Cell></Row>';
-      filtered.forEach((r, idx) => {
-        xml += '<Row><Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officialName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.pinNo || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell>';
-        for (let i = 1; i <= 12; i++) { xml += '<Cell><Data ss:Type="String">' + (r.answers[i] || '-') + '</Data></Cell>'; }
-        xml += '<Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell></Row>';
-      });
-      xml += '</Table></Worksheet></Workbook>';
-
-      const filename = "WAGP_Report_" + new Date().toISOString().split("T")[0] + ".xls";
-      const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
-      try {
-        const file = new File([blob], filename, { type: 'application/vnd.ms-excel' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: 'WAGP Mystery Shopping Report' });
-          return;
-        }
-      } catch (err) {}
-      const uri = 'data:application/vnd.ms-excel;base64,' + window.btoa(unescape(encodeURIComponent(xml)));
-      const downloadLink = document.createElement("a");
-      downloadLink.href = uri; downloadLink.download = filename;
-      document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink);
-    }
-
-    function copyRecordsToClipboard() {
-      const records = getFilteredRecords();
-      if (records.length === 0) { alert("No records to copy."); return; }
-      let tsv = "Sr. #\tOffice Name\tName of Bank\tName of Branch\tBranch Address\tDate of Visit\tFinal Rating\tAssessment\n";
-      records.forEach((r, idx) => {
-        tsv += (idx + 1) + "\t" + r.officeName + "\t" + r.bankName + "\t" + r.branchName + "\t" + r.branchAddress + "\t" + r.visitDate + "\t" + r.finalRating + "\t" + r.assessment + "\n";
-      });
-      navigator.clipboard.writeText(tsv).then(() => { alert("Summary copied to clipboard! Open Excel and tap Paste."); });
-    }
-
-    function clearAllData() {
-      if (confirm("Permanently clear saved visits?")) {
-        localStorage.removeItem("wagp_records"); updateCounter();
-      }
-    }
-
-    loadCredentials();
-    const d = document.getElementById("visitDate");
-    if (d) d.valueAsDate = new Date();
-    updateCounter();
-  </script>
-</body>
-</html>
+function clearData(){if(confirm("Clear stored audits?")){localStorage.removeItem("w_recs");updateCnt();}}
+loadCreds();document.getElementById("vDate").valueAsDate=new Date();updateCnt();
+</script></body></html>
