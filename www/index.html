@@ -3,227 +3,684 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>WAGP Mystery Shopping</title>
-  <!-- SheetJS for local Excel generation -->
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <title>WAGP Mystery Shopping Toolkit</title>
+  <!-- Local offline SheetJS engine -->
+  <script src="xlsx.full.min.js"></script>
   <style>
-    :root { --primary: #004d40; --accent: #00796b; --bg: #f4f6f8; --card: #ffffff; }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); margin: 0; padding: 12px; color: #222; }
-    .header { background: var(--primary); color: #fff; padding: 14px 16px; border-radius: 10px; margin-bottom: 12px; }
-    .header h2 { margin: 0; font-size: 17px; font-weight: 600; text-align: center; }
-    .header p { margin: 4px 0 0; font-size: 11px; opacity: 0.85; text-align: center; }
-    .card { background: var(--card); padding: 14px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    .card h3 { margin: 0 0 10px; font-size: 14px; color: var(--accent); border-bottom: 1px solid #eee; padding-bottom: 6px; }
-    .form-group { margin-bottom: 10px; }
-    label { font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px; color: #333; }
-    input, select { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
-    .q-item { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-    .q-item:last-child { border-bottom: none; }
-    .q-text { font-size: 12.5px; margin-bottom: 6px; color: #111; line-height: 1.4; }
-    .q-options { display: flex; gap: 10px; }
-    .q-options label { font-size: 13px; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-save { background: var(--accent); color: white; margin-bottom: 8px; }
-    .btn-export { background: #1b5e20; color: white; margin-bottom: 8px; }
-    .btn-clear { background: #b71c1c; color: white; }
-    .stats { font-size: 12px; color: #555; text-align: center; margin-bottom: 10px; }
+    :root {
+      --primary: #0a3d34;
+      --primary-light: #126354;
+      --accent: #00897b;
+      --gold: #d4af37;
+      --bg: #f3f6f8;
+      --card-bg: #ffffff;
+      --text: #212529;
+      --danger: #d32f2f;
+      --warning: #f57c00;
+      --success: #2e7d32;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+
+    /* Animated Splash Screen */
+    #splashScreen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      padding: 50px 24px 30px; z-index: 9999; text-align: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .splash-content { margin-top: 15vh; animation: fadeInDown 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .splash-logo-ring {
+      width: 86px; height: 86px; margin: 0 auto 20px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center; font-size: 38px;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+    }
+    .splash-title {
+      font-size: 26px; font-weight: 800; line-height: 1.3;
+      background: linear-gradient(45deg, #ffffff, #80e8d4, #ffd700);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+    }
+    .splash-sub { color: #cfded9; font-size: 15px; font-weight: 500; letter-spacing: 0.5px; }
+    .splash-btn {
+      margin-top: 35px; background: linear-gradient(90deg, #00897b, #00bfa5); color: #fff;
+      border: none; padding: 14px 40px; font-size: 15px; font-weight: 700;
+      border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
+    }
+    .splash-footer { animation: fadeInUp 1.2s ease; }
+    .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
+    .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
+
+    /* Main App Container */
+    #appContent { display: none; padding: 14px; max-width: 600px; margin: 0 auto 80px; }
+    .app-bar {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff; padding: 16px; border-radius: 14px; margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(10,61,52,0.18);
+    }
+    .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
+    .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
+
+    /* Live Floating Rating Bar */
+    .live-chip-container {
+      position: sticky; top: 10px; z-index: 100; margin-bottom: 14px;
+    }
+    .live-chip {
+      background: #ffffff; border-radius: 12px; padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-left: 6px solid var(--accent);
+    }
+    .live-score { font-size: 14px; font-weight: 700; }
+    .live-badge {
+      font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+      color: #fff; background: #757575; text-transform: uppercase;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg); border-radius: 14px; padding: 15px;
+      margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .card-title {
+      font-size: 14px; font-weight: 700; color: var(--primary-light);
+      margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .saved-badge { font-size: 10px; background: #e0f2f1; color: var(--accent); padding: 2px 8px; border-radius: 10px; }
+
+    /* Form Fields */
+    .field { margin-bottom: 11px; }
+    .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
+    .field input, .field select {
+      width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #e0e0e0;
+      border-radius: 8px; background: #fafafa; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
+    .row-2 { display: flex; gap: 10px; }
+    .row-2 .field { flex: 1; }
+
+    /* Custom Bank Dropdown Selector */
+    .bank-trigger {
+      width: 100%; padding: 11px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px;
+      background: #fafafa; font-size: 13.5px; text-align: left; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    /* Question Segmented Toggles */
+    .q-box { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .q-box:last-child { border-bottom: none; }
+    .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
+    .pill-group { display: flex; gap: 8px; }
+    .pill-btn {
+      flex: 1; padding: 9px 0; text-align: center; border-radius: 8px;
+      border: 1.5px solid #dcdcdc; background: #fff; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s ease;
+    }
+    .pill-btn.active-yes { background: var(--success); color: #fff; border-color: var(--success); }
+    .pill-btn.active-no { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    /* Action Buttons */
+    .btn {
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-submit { background: linear-gradient(135deg, var(--accent), var(--primary-light)); color: #fff; margin-top: 10px; }
+    .btn-excel { background: #1b5e20; color: #fff; margin-bottom: 8px; }
+    .btn-clear { background: #eceff1; color: #455a64; font-weight: 600; }
+
+    /* Bank Search Modal */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); z-index: 10000; justify-content: center; align-items: flex-end;
+    }
+    .modal-sheet {
+      background: #fff; width: 100%; max-height: 80vh; border-radius: 20px 20px 0 0;
+      padding: 18px 16px; display: flex; flex-direction: column;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .modal-header h3 { margin: 0; font-size: 16px; }
+    .bank-search-input {
+      padding: 10px 14px; border: 1.5px solid #ccc; border-radius: 8px;
+      font-size: 14px; width: 100%; margin-bottom: 12px;
+    }
+    .bank-list { overflow-y: auto; flex: 1; max-height: 55vh; }
+    .bank-item {
+      padding: 12px 8px; border-bottom: 1px solid #f0f0f0; font-size: 13.5px; cursor: pointer;
+    }
+    .bank-item:active { background: #e0f2f1; }
+
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2>WAGP Mystery Shopping</h2>
-    <p>Monitoring of Bank Branch</p>
+  <!-- Animated Splash Screen -->
+  <div id="splashScreen">
+    <div class="splash-content">
+      <div class="splash-logo-ring">🏛️</div>
+      <div class="splash-title">Mystery Shopping<br/>Toolkit</div>
+      <div class="splash-sub">SBP BSC Bahawalpur</div>
+      <button class="splash-btn" onclick="startApp()">Start Evaluation ➔</button>
+    </div>
+    <div class="splash-footer">
+      <p>Prepared & Designed by</p>
+      <h4>Muhammad Arif Gondal</h4>
+    </div>
   </div>
 
-  <form id="wagpForm">
-    <!-- Branch Metadata -->
-    <div class="card">
-      <h3>Branch & Official Info</h3>
-      <div class="form-group">
-        <label>SBP BSC Office</label>
-        <input type="text" id="officeName" placeholder="e.g. Bahawalpur / Karachi" required />
+  <!-- Main Application Body -->
+  <div id="appContent">
+    <div class="app-bar">
+      <h1>WAGP Mystery Shopping</h1>
+      <p>Bank Branch Monitoring & Assessment System</p>
+    </div>
+
+    <!-- Live Auto-Score Chip -->
+    <div class="live-chip-container">
+      <div class="live-chip" id="liveScoreCard">
+        <div>
+          <div class="live-score" id="liveScoreText">Score: 0 / 12</div>
+          <span style="font-size: 10.5px; color: #666;" id="liveStatusNote">Answer all questions</span>
+        </div>
+        <div class="live-badge" id="liveBadge">Pending</div>
       </div>
-      <div class="form-group">
-        <label>Name of Official & PIN</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="officialName" placeholder="Name" required />
-          <input type="text" id="pinNo" placeholder="PIN No" required />
+    </div>
+
+    <form id="auditForm">
+      <!-- Officer Profile (Auto Saved) -->
+      <div class="card">
+        <div class="card-title">
+          <span>Officer Credentials</span>
+          <span class="saved-badge">Auto-Saved</span>
+        </div>
+        <div class="field">
+          <label>SBP BSC Office</label>
+          <input type="text" id="officeName" placeholder="e.g. Bahawalpur" required oninput="saveCredentials()" />
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Name of Official</label>
+            <input type="text" id="officialName" placeholder="Official Name" required oninput="saveCredentials()" />
+          </div>
+          <div class="field">
+            <label>PIN No.</label>
+            <input type="text" id="pinNo" placeholder="PIN" required oninput="saveCredentials()" />
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <label>Date of Visit</label>
-        <input type="date" id="visitDate" required />
+
+      <!-- Branch Identification -->
+      <div class="card">
+        <div class="card-title">Branch Under Inspection</div>
+        <div class="field">
+          <label>Date of Visit</label>
+          <input type="date" id="visitDate" required />
+        </div>
+        <div class="field">
+          <label>Name of Bank</label>
+          <div class="bank-trigger" onclick="openBankModal()">
+            <span id="selectedBankText" style="color:#757575;">Select Bank...</span>
+            <span>▾</span>
+          </div>
+          <input type="hidden" id="bankName" required />
+        </div>
+        <div class="field">
+          <label>Branch Name & Code</label>
+          <input type="text" id="branchName" placeholder="e.g. Model Town Branch (0123)" required />
+        </div>
+        <div class="field">
+          <label>Branch Address</label>
+          <input type="text" id="branchAddress" placeholder="Physical location / Road" required />
+        </div>
       </div>
-      <div class="form-group">
-        <label>Name of Bank</label>
-        <input type="text" id="bankName" placeholder="e.g. HBL, NBP, Meezan" required />
+
+      <!-- Questionnaire Sections -->
+      <div class="card">
+        <div class="card-title">Section 1: Branch Readiness</div>
+        <div id="section1Container"></div>
       </div>
-      <div class="form-group">
-        <label>Branch Name & Code</label>
-        <input type="text" id="branchName" placeholder="e.g. Main Branch (0123)" required />
+
+      <div class="card">
+        <div class="card-title">Section 2: Staff Knowledge</div>
+        <div id="section2Container"></div>
       </div>
-      <div class="form-group">
-        <label>Branch Address</label>
-        <input type="text" id="branchAddress" placeholder="Full branch address" required />
+
+      <div class="card">
+        <div class="card-title">Section 3: Customer Service & Behavior</div>
+        <div id="section3Container"></div>
       </div>
+
+      <button type="submit" class="btn btn-submit">Save Branch Audit</button>
+    </form>
+
+    <!-- Advanced Multi-Option Excel Export Section -->
+    <div class="card" style="margin-top: 18px;">
+      <div class="card-title">Excel Reports & Filters</div>
+      <div style="font-size: 12.5px; color: #555; margin-bottom: 12px;" id="recordCounterText">Stored Branch Records: 0</div>
+
+      <div class="field">
+        <label>Export Filter Mode</label>
+        <select id="exportMode" onchange="toggleFilterInputs()">
+          <option value="all">Export All Saved Records</option>
+          <option value="today">Export Today's Visits Only</option>
+          <option value="dateRange">Export Custom Date Range</option>
+          <option value="lastN">Export Last N Visits</option>
+        </select>
+      </div>
+
+      <div id="dateRangeBox" style="display: none;" class="row-2">
+        <div class="field">
+          <label>From Date</label>
+          <input type="date" id="exportFromDate" />
+        </div>
+        <div class="field">
+          <label>To Date</label>
+          <input type="date" id="exportToDate" />
+        </div>
+      </div>
+
+      <div id="lastNBox" style="display: none;" class="field">
+        <label>Number of Recent Visits</label>
+        <input type="number" id="exportLastNCount" placeholder="e.g. 5" min="1" />
+      </div>
+
+      <button type="button" class="btn btn-excel" onclick="handleExcelExport()">Generate Excel Workbook (2 Sheets)</button>
+      <button type="button" class="btn btn-clear" onclick="clearAllData()">Reset & Clear Saved Records</button>
     </div>
+  </div>
 
-    <!-- Section 1 -->
-    <div class="card">
-      <h3>Section 1: Branch Readiness</h3>
-      <div id="section1"></div>
+  <!-- Searchable Bank Selector Modal -->
+  <div class="modal" id="bankModal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3>Select Bank</h3>
+        <span style="font-size: 20px; cursor: pointer;" onclick="closeBankModal()">✕</span>
+      </div>
+      <input type="text" class="bank-search-input" id="bankSearch" placeholder="Type bank name to search..." oninput="filterBanks()" />
+      <div class="bank-list" id="bankList"></div>
     </div>
-
-    <!-- Section 2 -->
-    <div class="card">
-      <h3>Section 2: Staff Knowledge</h3>
-      <div id="section2"></div>
-    </div>
-
-    <!-- Section 3 -->
-    <div class="card">
-      <h3>Section 3: Customer Service & Behavior</h3>
-      <div id="section3"></div>
-    </div>
-
-    <button type="submit" class="btn btn-save">Save Evaluation Record</button>
-  </form>
-
-  <div class="card">
-    <h3>Saved Audits & Export</h3>
-    <div id="recordCount" class="stats">Stored Records: 0</div>
-    <button type="button" class="btn btn-export" onclick="exportToExcel()">Export to Excel (.xlsx)</button>
-    <button type="button" class="btn btn-clear" onclick="clearData()">Clear All Records</button>
   </div>
 
   <script>
+    // 44 Banks from Attached Bank Names.xlsx
+    const banks = [
+      "AlBaraka Bank (Pakistan) Limited", "Allied Bank Limited", "Askari Bank Limited",
+      "Bank AL Habib Limited", "Bank Alfalah Limited", "BankIslami Pakistan Limited",
+      "Dubai Islamic Bank Pakistan Limited", "Faysal Bank Limited", "First Women Bank Limited",
+      "Habib Bank Limited", "Habib Metropolitan Bank Limited", "JS Bank Limited",
+      "MCB Bank Limited", "MCB Islamic Bank Limited", "Meezan Bank Limited",
+      "National Bank of Pakistan", "SAMBA Bank Limited", "Silkbank Limited",
+      "Sindh Bank Limited", "Soneri Bank Limited", "Standard Chartered Bank (Pakistan) Limited",
+      "The Bank of Khyber", "The Bank of Punjab", "United Bank Limited",
+      "Bank Makramah Limited", "Citibank N.A.", "Deutsche Bank AG",
+      "Industrial and Commercial Bank of China Limited", "Bank of China Limited",
+      "Punjab Provincial Co-operative Bank Limited", "Zarai Taraqiati Bank Limited",
+      "Easypaisa Digital Bank Limited", "Mashreq Digital Bank Limited",
+      "Apna Microfinance Bank Limited", "Advans Pakistan Microfinance Bank Limited",
+      "FINCA Microfinance Bank Limited", "HBL Microfinance Bank Limited",
+      "Khushhali Microfinance Bank Limited", "Mobilink Microfinance Bank Limited",
+      "NRSP Microfinance Bank Limited", "Pak Oman Microfinance Bank Limited",
+      "Sindh Microfinance Bank Limited", "Telenor Microfinance Bank Limited",
+      "U Microfinance Bank Limited"
+    ];
+
     const questions = [
       { id: 1, sec: 1, text: "Are the LAFs available for salaried borrowers?" },
       { id: 2, sec: 1, text: "Are the LAFs available for formal business borrowers?" },
       { id: 3, sec: 1, text: "Are the LAFs available for informal income borrowers?" },
       { id: 4, sec: 1, text: "Either branch itself receiving WAGP applications or referring to designated branch?" },
       { id: 5, sec: 1, text: "Did referral branch guide correctly about designated branch (if non-designated)?" },
-      { id: 6, sec: 1, text: "Is promotional/marketing material available (brochures, banners, standees, displays)?" },
+      { id: 6, sec: 1, text: "Is promotional/marketing material available (brochures, banners, standees, digital displays)?" },
       { id: 7, sec: 2, text: "Did the staff know about the WAGP scheme?" },
       { id: 8, sec: 2, text: "Could the official explain the basic features of the scheme?" },
       { id: 9, sec: 2, text: "Did the staff know the eligibility criteria for WAGP?" },
       { id: 10, sec: 2, text: "Did the staff know the required documents for processing an application?" },
       { id: 11, sec: 2, text: "Did the branch provide timelines for application processing?" },
-      { id: 12, sec: 3, text: "Was branch staff polite/cooperative and guided properly on submission process?" }
+      { id: 12, sec: 3, text: "Was branch staff polite, cooperative, and guided properly on submission process?" }
     ];
 
-    // Render questions
-    questions.forEach(q => {
-      const container = document.getElementById("section" + q.sec);
-      const div = document.createElement("div");
-      div.className = "q-item";
-      div.innerHTML = `
-        <div class="q-text"><b>${q.id}.</b> ${q.text}</div>
-        <div class="q-options">
-          <label><input type="radio" name="q_${q.id}" value="Yes" required /> Yes</label>
-          <label><input type="radio" name="q_${q.id}" value="No" required /> No</label>
-        </div>
-      `;
-      container.appendChild(div);
-    });
+    let answers = {};
 
-    document.getElementById("visitDate").valueAsDate = new Date();
-    updateCounter();
+    function startApp() {
+      document.getElementById("splashScreen").style.opacity = "0";
+      setTimeout(() => {
+        document.getElementById("splashScreen").style.display = "none";
+        document.getElementById("appContent").style.display = "block";
+      }, 500);
+    }
 
-    document.getElementById("wagpForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    // Initialize Questions with Segmented Buttons
+    function initQuestions() {
+      questions.forEach(q => {
+        const container = document.getElementById("section" + q.sec + "Container");
+        const box = document.createElement("div");
+        box.className = "q-box";
+        box.innerHTML = `
+          <div class="q-title"><b>${q.id}.</b> ${q.text}</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_${q.id}" onclick="setAnswer(${q.id}, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_${q.id}" onclick="setAnswer(${q.id}, 'No')">✕ No</div>
+          </div>
+        `;
+        container.appendChild(box);
+      });
+    }
 
-      let ans = {};
-      let totalYes = 0;
-      for (let i = 1; i <= 12; i++) {
-        const val = document.querySelector(`input[name="q_${i}"]:checked`).value;
-        ans[`q_${i}`] = val;
-        if (val === "Yes") totalYes++;
-      }
+    function setAnswer(qid, val) {
+      answers[qid] = val;
+      const btnYes = document.getElementById(`btn_yes_${qid}`);
+      const btnNo = document.getElementById(`btn_no_${qid}`);
 
-      // Exact Scoring Engine from SBP Questionnaire
-      let finalRating = totalYes;
-      let assessment = "";
-
-      const anyOneToFiveNo = [1, 2, 3, 4, 5].some(num => ans[`q_${num}`] === "No");
-
-      if (anyOneToFiveNo) {
-        assessment = "Poor";
+      if (val === 'Yes') {
+        btnYes.className = 'pill-btn active-yes';
+        btnNo.className = 'pill-btn';
       } else {
-        if (totalYes >= 11) {
-          assessment = "Good";
-        } else if (totalYes >= 8) {
-          assessment = "Satisfactory";
-        } else {
-          assessment = "Below Expectations";
+        btnNo.className = 'pill-btn active-no';
+        btnYes.className = 'pill-btn';
+      }
+      updateLiveScore();
+    }
+
+    // Live SBP Scoring Engine
+    function calculateScore() {
+      let totalYes = 0;
+      let totalAnswered = 0;
+      for (let i = 1; i <= 12; i++) {
+        if (answers[i]) {
+          totalAnswered++;
+          if (answers[i] === 'Yes') totalYes++;
         }
       }
 
-      const record = {
+      let fatalNo = false;
+      for (let i = 1; i <= 5; i++) {
+        if (answers[i] === 'No') {
+          fatalNo = true;
+          break;
+        }
+      }
+
+      let rating = totalYes;
+      let assessment = "Pending";
+      let badgeColor = "#757575";
+
+      if (fatalNo) {
+        assessment = "Poor";
+        badgeColor = "var(--danger)";
+      } else if (totalAnswered === 12) {
+        if (rating >= 11) {
+          assessment = "Good";
+          badgeColor = "var(--success)";
+        } else if (rating >= 8) {
+          assessment = "Satisfactory";
+          badgeColor = "var(--accent)";
+        } else {
+          assessment = "Below Expectations";
+          badgeColor = "var(--warning)";
+        }
+      } else if (totalAnswered > 0) {
+        assessment = "In Progress";
+        badgeColor = "#0288d1";
+      }
+
+      return { totalYes, totalAnswered, fatalNo, rating, assessment, badgeColor };
+    }
+
+    function updateLiveScore() {
+      const { rating, totalAnswered, fatalNo, assessment, badgeColor } = calculateScore();
+      document.getElementById("liveScoreText").innerText = `Score: ${rating} / 12 Yes`;
+      const badge = document.getElementById("liveBadge");
+      badge.innerText = assessment;
+      badge.style.backgroundColor = badgeColor;
+
+      const note = document.getElementById("liveStatusNote");
+      if (fatalNo) {
+        note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating";
+        note.style.color = "var(--danger)";
+      } else if (totalAnswered < 12) {
+        note.innerText = `${12 - totalAnswered} questions remaining`;
+        note.style.color = "#666";
+      } else {
+        note.innerText = "All questions evaluated";
+        note.style.color = "var(--success)";
+      }
+    }
+
+    // Auto-Save Officer Credentials
+    function saveCredentials() {
+      const creds = {
+        office: document.getElementById("officeName").value,
+        name: document.getElementById("officialName").value,
+        pin: document.getElementById("pinNo").value
+      };
+      localStorage.setItem("wagp_creds", JSON.stringify(creds));
+    }
+
+    function loadCredentials() {
+      const saved = JSON.parse(localStorage.getItem("wagp_creds") || "{}");
+      if (saved.office) document.getElementById("officeName").value = saved.office;
+      if (saved.name) document.getElementById("officialName").value = saved.name;
+      if (saved.pin) document.getElementById("pinNo").value = saved.pin;
+    }
+
+    // Searchable Bank Modal
+    function openBankModal() {
+      document.getElementById("bankModal").style.display = "flex";
+      renderBankList(banks);
+      document.getElementById("bankSearch").value = "";
+      document.getElementById("bankSearch").focus();
+    }
+    function closeBankModal() { document.getElementById("bankModal").style.display = "none"; }
+    function renderBankList(list) {
+      const container = document.getElementById("bankList");
+      container.innerHTML = "";
+      list.forEach(b => {
+        const item = document.createElement("div");
+        item.className = "bank-item";
+        item.innerText = b;
+        item.onclick = () => selectBank(b);
+        container.appendChild(item);
+      });
+    }
+    function filterBanks() {
+      const term = document.getElementById("bankSearch").value.toLowerCase();
+      const filtered = banks.filter(b => b.toLowerCase().includes(term));
+      renderBankList(filtered);
+    }
+    function selectBank(b) {
+      document.getElementById("bankName").value = b;
+      document.getElementById("selectedBankText").innerText = b;
+      document.getElementById("selectedBankText").style.color = "#212529";
+      closeBankModal();
+    }
+
+    // Form Submission
+    document.getElementById("auditForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (!document.getElementById("bankName").value) {
+        alert("Please select a bank from the list.");
+        return;
+      }
+      for (let i = 1; i <= 12; i++) {
+        if (!answers[i]) {
+          alert(`Please answer question #${i}`);
+          return;
+        }
+      }
+
+      const scoreInfo = calculateScore();
+      const newRecord = {
         officeName: document.getElementById("officeName").value.trim(),
-        bankName: document.getElementById("bankName").value.trim(),
+        officialName: document.getElementById("officialName").value.trim(),
+        pinNo: document.getElementById("pinNo").value.trim(),
+        visitDate: document.getElementById("visitDate").value,
+        bankName: document.getElementById("bankName").value,
         branchName: document.getElementById("branchName").value.trim(),
         branchAddress: document.getElementById("branchAddress").value.trim(),
-        visitDate: document.getElementById("visitDate").value,
-        finalRating: finalRating,
-        assessment: assessment
+        finalRating: scoreInfo.rating,
+        assessment: scoreInfo.assessment,
+        answers: { ...answers },
+        timestamp: new Date().getTime()
       };
 
-      let history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      history.push(record);
-      localStorage.setItem("wagp_records", JSON.stringify(history));
+      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      records.push(newRecord);
+      localStorage.setItem("wagp_records", JSON.stringify(records));
 
-      alert(`Visit Saved!\nRating: ${finalRating}/12\nAssessment: ${assessment}`);
-      document.getElementById("wagpForm").reset();
-      document.getElementById("visitDate").valueAsDate = new Date();
+      alert(`Branch visit saved successfully!\nRating: ${scoreInfo.rating} | Assessment: ${scoreInfo.assessment}`);
+
+      // Reset branch fields & answers, keep officer info
+      document.getElementById("branchName").value = "";
+      document.getElementById("branchAddress").value = "";
+      document.getElementById("bankName").value = "";
+      document.getElementById("selectedBankText").innerText = "Select Bank...";
+      document.getElementById("selectedBankText").style.color = "#757575";
+      answers = {};
+      for (let i = 1; i <= 12; i++) {
+        document.getElementById(`btn_yes_${i}`).className = "pill-btn";
+        document.getElementById(`btn_no_${i}`).className = "pill-btn";
+      }
+      updateLiveScore();
       updateCounter();
     });
 
     function updateCounter() {
-      const history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      document.getElementById("recordCount").innerText = `Stored Records: ${history.length}`;
+      const records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      document.getElementById("recordCounterText").innerText = `Stored Branch Records: ${records.length}`;
     }
 
-    function exportToExcel() {
-      const history = JSON.parse(localStorage.getItem("wagp_records") || "[]");
-      if (history.length === 0) {
-        alert("No inspection records to export.");
+    function toggleFilterInputs() {
+      const mode = document.getElementById("exportMode").value;
+      document.getElementById("dateRangeBox").style.display = mode === "dateRange" ? "flex" : "none";
+      document.getElementById("lastNBox").style.display = mode === "lastN" ? "block" : "none";
+    }
+
+    // Multi-Filter Excel Generation with 2 Sheets
+    async function handleExcelExport() {
+      let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
+      if (records.length === 0) {
+        alert("No inspection records available to export.");
         return;
       }
 
-      // Map directly to your Excel template format
-      const rows = [
+      const mode = document.getElementById("exportMode").value;
+      let filtered = [...records];
+
+      if (mode === "today") {
+        const todayStr = new Date().toISOString().split("T")[0];
+        filtered = filtered.filter(r => r.visitDate === todayStr);
+      } else if (mode === "dateRange") {
+        const from = document.getElementById("exportFromDate").value;
+        const to = document.getElementById("exportToDate").value;
+        if (from) filtered = filtered.filter(r => r.visitDate >= from);
+        if (to) filtered = filtered.filter(r => r.visitDate <= to);
+      } else if (mode === "lastN") {
+        const n = parseInt(document.getElementById("exportLastNCount").value, 10);
+        if (n && n > 0) filtered = filtered.slice(-n);
+      }
+
+      if (filtered.length === 0) {
+        alert("No records matched the selected export filter.");
+        return;
+      }
+
+      // Sheet 1: Exact Reporting Format
+      const summaryRows = [
         ["WAGP Mystery Shopping - Reporting Format"],
         ["Sr. #", "Office Name", "Name of Bank", "Name of Branch", "Branch Address", "Date of Visit", "Final Rating", "Assessment\n(Based on Rating)"]
       ];
-
-      history.forEach((rec, idx) => {
-        rows.push([
+      filtered.forEach((r, idx) => {
+        summaryRows.push([
           idx + 1,
-          rec.officeName,
-          rec.bankName,
-          rec.branchName,
-          rec.branchAddress,
-          rec.visitDate,
-          rec.finalRating,
-          rec.assessment
+          r.officeName,
+          r.bankName,
+          r.branchName,
+          r.branchAddress,
+          r.visitDate,
+          r.finalRating,
+          r.assessment
         ]);
       });
 
-      const ws = XLSX.utils.aoa_to_sheet(rows);
+      // Sheet 2: Detailed Responses (All 12 Questions)
+      const detailRows = [
+        ["WAGP Mystery Shopping - Detailed Questionnaire Responses"],
+        [
+          "Sr. #", "Office Name", "Official Name", "PIN No.", "Name of Bank", "Name of Branch", "Branch Address", "Date of Visit",
+          "Q1: Salaried LAF", "Q2: Business LAF", "Q3: Informal LAF", "Q4: Application Handling", "Q5: Referral Guidance",
+          "Q6: Marketing Material", "Q7: Staff Scheme Knowledge", "Q8: Basic Features Explanation", "Q9: Eligibility Knowledge",
+          "Q10: Document Checklist", "Q11: Timelines Provided", "Q12: Polite & Customer Service", "Final Rating", "Assessment"
+        ]
+      ];
+      filtered.forEach((r, idx) => {
+        detailRows.push([
+          idx + 1,
+          r.officeName,
+          r.officialName,
+          r.pinNo,
+          r.bankName,
+          r.branchName,
+          r.branchAddress,
+          r.visitDate,
+          r.answers["1"] || "-", r.answers["2"] || "-", r.answers["3"] || "-", r.answers["4"] || "-",
+          r.answers["5"] || "-", r.answers["6"] || "-", r.answers["7"] || "-", r.answers["8"] || "-",
+          r.answers["9"] || "-", r.answers["10"] || "-", r.answers["11"] || "-", r.answers["12"] || "-",
+          r.finalRating,
+          r.assessment
+        ]);
+      });
+
+      // Create Workbook
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Reporting Format");
-      XLSX.writeFile(wb, "WAGP Mystery Shopping - Reporting Format.xlsx");
+      const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
+      const ws2 = XLSX.utils.aoa_to_sheet(detailRows);
+      XLSX.utils.book_append_sheet(wb, ws1, "Reporting Format");
+      XLSX.utils.book_append_sheet(wb, ws2, "Detailed Responses");
+
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const filename = `WAGP_Mystery_Shopping_${new Date().toISOString().split("T")[0]}.xlsx`;
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // Robust Native Share & Download Trigger for Android
+      try {
+        const file = new File([blob], filename, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'WAGP Mystery Shopping Report',
+            text: 'Exported bank monitoring results workbook.'
+          });
+          return;
+        }
+      } catch (err) {
+        console.log("Native share skipped, invoking browser fallback", err);
+      }
+
+      // Classic Browser Fallback
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
-    function clearData() {
-      if (confirm("Are you sure you want to clear saved visits? Ensure you have exported to Excel first.")) {
+    function clearAllData() {
+      if (confirm("Are you sure you want to permanently clear saved visits? Make sure you have exported to Excel first.")) {
         localStorage.removeItem("wagp_records");
         updateCounter();
       }
     }
+
+    // App Startup
+    initQuestions();
+    loadCredentials();
+    document.getElementById("visitDate").valueAsDate = new Date();
+    updateCounter();
   </script>
 </body>
 </html>
