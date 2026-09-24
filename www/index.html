@@ -6,21 +6,12 @@
   <title>WAGP Mystery Shopping Toolkit</title>
   <style>
     :root {
-      --primary: #0a3d34;
-      --primary-light: #126354;
-      --accent: #00897b;
-      --gold: #d4af37;
-      --bg: #f3f6f8;
-      --card-bg: #ffffff;
-      --text: #212529;
-      --danger: #d32f2f;
-      --warning: #f57c00;
-      --success: #2e7d32;
+      --primary: #0a3d34; --primary-light: #126354; --accent: #00897b;
+      --gold: #d4af37; --bg: #f3f6f8; --card-bg: #ffffff; --text: #212529;
+      --danger: #d32f2f; --warning: #f57c00; --success: #2e7d32;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg); margin: 0; padding: 0; color: var(--text); }
-
-    /* Splash Screen */
     #splashScreen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
@@ -45,12 +36,9 @@
       border: none; padding: 15px 44px; font-size: 16px; font-weight: 700;
       border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
     }
-    .splash-btn:active { opacity: 0.8; transform: scale(0.98); }
     .splash-footer { margin-bottom: 10px; }
     .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
     .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
-
-    /* App Container */
     #appContent { padding: 14px; max-width: 600px; margin: 0 auto 80px; }
     .app-bar {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -59,8 +47,6 @@
     }
     .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
     .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
-
-    /* Live Score Bar */
     .live-chip-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 14px; }
     .live-chip {
       background: #ffffff; border-radius: 12px; padding: 10px 14px;
@@ -72,8 +58,6 @@
       font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
       color: #fff; background: #757575; text-transform: uppercase;
     }
-
-    /* Cards */
     .card {
       background: var(--card-bg); border-radius: 14px; padding: 15px;
       margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
@@ -83,19 +67,14 @@
       margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between;
     }
     .saved-badge { font-size: 10px; background: #e0f2f1; color: var(--accent); padding: 2px 8px; border-radius: 10px; }
-
-    /* Form Fields */
     .field { margin-bottom: 11px; }
     .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
     .field input, .field select {
       width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #dcdcdc;
       border-radius: 8px; background: #fafafa; outline: none; -webkit-appearance: menulist;
     }
-    .field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
     .row-2 { display: flex; gap: 10px; }
     .row-2 .field { flex: 1; }
-
-    /* Reliable Native HTML Radio Toggle Buttons */
     .q-box { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .q-box:last-child { border-bottom: none; }
     .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
@@ -106,19 +85,9 @@
       border: 1.5px solid #dcdcdc; background: #fff; font-size: 13px;
       font-weight: 700; cursor: pointer; color: #444; display: block;
     }
-    .pill-group input[value="Yes"]:checked + .pill-label {
-      background: var(--success); color: #fff; border-color: var(--success);
-    }
-    .pill-group input[value="No"]:checked + .pill-label {
-      background: var(--danger); color: #fff; border-color: var(--danger);
-    }
-
-    /* Buttons */
-    .btn {
-      width: 100%; padding: 13px; border: none; border-radius: 10px;
-      font-size: 14px; font-weight: 700; cursor: pointer;
-    }
-    .btn:active { transform: scale(0.98); }
+    .pill-group input[value="Yes"]:checked + .pill-label { background: var(--success); color: #fff; border-color: var(--success); }
+    .pill-group input[value="No"]:checked + .pill-label { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-submit { background: linear-gradient(135deg, var(--accent), var(--primary-light)); color: #fff; margin-top: 10px; }
     .btn-excel { background: #1b5e20; color: #fff; margin-bottom: 8px; }
     .btn-clipboard { background: #0277bd; color: #fff; margin-bottom: 8px; }
@@ -127,7 +96,6 @@
 </head>
 <body>
 
-  <!-- Splash Screen -->
   <div id="splashScreen">
     <div class="splash-content">
       <div class="splash-logo-ring">🏛️</div>
@@ -141,14 +109,12 @@
     </div>
   </div>
 
-  <!-- Main Application Body -->
   <div id="appContent">
     <div class="app-bar">
       <h1>WAGP Mystery Shopping</h1>
       <p>Bank Branch Monitoring & Assessment System</p>
     </div>
 
-    <!-- Live Auto-Score Chip -->
     <div class="live-chip-container">
       <div class="live-chip">
         <div>
@@ -160,37 +126,19 @@
     </div>
 
     <form id="auditForm" onsubmit="return handleFormSubmit(event)">
-      <!-- Officer Profile (Auto Saved) -->
       <div class="card">
-        <div class="card-title">
-          <span>Officer Credentials</span>
-          <span class="saved-badge">Auto-Saved</span>
-        </div>
-        <div class="field">
-          <label>SBP BSC Office</label>
-          <input type="text" id="officeName" placeholder="e.g. Bahawalpur" required oninput="saveCredentials()" />
-        </div>
+        <div class="card-title"><span>Officer Credentials</span><span class="saved-badge">Auto-Saved</span></div>
+        <div class="field"><label>SBP BSC Office</label><input type="text" id="officeName" placeholder="e.g. Bahawalpur" required oninput="saveCredentials()" /></div>
         <div class="row-2">
-          <div class="field">
-            <label>Name of Official</label>
-            <input type="text" id="officialName" placeholder="Official Name" required oninput="saveCredentials()" />
-          </div>
-          <div class="field">
-            <label>PIN No.</label>
-            <input type="text" id="pinNo" placeholder="PIN" required oninput="saveCredentials()" />
-          </div>
+          <div class="field"><label>Name of Official</label><input type="text" id="officialName" placeholder="Official Name" required oninput="saveCredentials()" /></div>
+          <div class="field"><label>PIN No.</label><input type="text" id="pinNo" placeholder="PIN" required oninput="saveCredentials()" /></div>
         </div>
       </div>
 
-      <!-- Branch Identification -->
       <div class="card">
         <div class="card-title">Branch Under Inspection</div>
-        <div class="field">
-          <label>Date of Visit</label>
-          <input type="date" id="visitDate" required />
-        </div>
-        <div class="field">
-          <label>Name of Bank</label>
+        <div class="field"><label>Date of Visit</label><input type="date" id="visitDate" required /></div>
+        <div class="field"><label>Name of Bank</label>
           <select id="bankName" required>
             <option value="">-- Tap to Select Bank --</option>
             <option value="Advans Pakistan Microfinance Bank Limited">Advans Pakistan Microfinance Bank Limited</option>
@@ -239,156 +187,36 @@
             <option value="Zarai Taraqiati Bank Limited">Zarai Taraqiati Bank Limited</option>
           </select>
         </div>
-        <div class="field">
-          <label>Branch Name & Code</label>
-          <input type="text" id="branchName" placeholder="e.g. Model Town Branch (0123)" required />
-        </div>
-        <div class="field">
-          <label>Branch Address</label>
-          <input type="text" id="branchAddress" placeholder="Physical location / Road" required />
-        </div>
+        <div class="field"><label>Branch Name & Code</label><input type="text" id="branchName" placeholder="e.g. Model Town Branch (0123)" required /></div>
+        <div class="field"><label>Branch Address</label><input type="text" id="branchAddress" placeholder="Physical location / Road" required /></div>
       </div>
 
-      <!-- Section 1 -->
       <div class="card">
         <div class="card-title">Section 1: Branch Readiness</div>
-        
-        <div class="q-box">
-          <div class="q-title"><b>1.</b> Are the Loan Application Forms (LAFs) available in the branch for salaried borrowers?</div>
-          <div class="pill-group">
-            <input type="radio" id="q1_yes" name="q_1" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q1_yes">✓ Yes</label>
-            <input type="radio" id="q1_no" name="q_1" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q1_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>2.</b> Are the LAFs available in the branch for formal business borrowers?</div>
-          <div class="pill-group">
-            <input type="radio" id="q2_yes" name="q_2" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q2_yes">✓ Yes</label>
-            <input type="radio" id="q2_no" name="q_2" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q2_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>3.</b> Are the LAFs available in the branch for informal income borrowers?</div>
-          <div class="pill-group">
-            <input type="radio" id="q3_yes" name="q_3" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q3_yes">✓ Yes</label>
-            <input type="radio" id="q3_no" name="q_3" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q3_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>4.</b> Either the branch itself receiving WAGP applications or referring to designated branch?</div>
-          <div class="pill-group">
-            <input type="radio" id="q4_yes" name="q_4" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q4_yes">✓ Yes</label>
-            <input type="radio" id="q4_no" name="q_4" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q4_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>5.</b> Did referral branch guide correctly about designated branch (if non-designated)?</div>
-          <div class="pill-group">
-            <input type="radio" id="q5_yes" name="q_5" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q5_yes">✓ Yes</label>
-            <input type="radio" id="q5_no" name="q_5" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q5_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>6.</b> Is promotional/marketing material available (brochures, banners, standees, displays)?</div>
-          <div class="pill-group">
-            <input type="radio" id="q6_yes" name="q_6" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q6_yes">✓ Yes</label>
-            <input type="radio" id="q6_no" name="q_6" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q6_no">✕ No</label>
-          </div>
-        </div>
+        <div class="q-box"><div class="q-title"><b>1.</b> Are the Loan Application Forms (LAFs) available for salaried borrowers?</div><div class="pill-group"><input type="radio" id="q1_yes" name="q_1" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q1_yes">✓ Yes</label><input type="radio" id="q1_no" name="q_1" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q1_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>2.</b> Are the LAFs available for formal business borrowers?</div><div class="pill-group"><input type="radio" id="q2_yes" name="q_2" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q2_yes">✓ Yes</label><input type="radio" id="q2_no" name="q_2" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q2_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>3.</b> Are the LAFs available for informal income borrowers?</div><div class="pill-group"><input type="radio" id="q3_yes" name="q_3" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q3_yes">✓ Yes</label><input type="radio" id="q3_no" name="q_3" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q3_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>4.</b> Either branch itself receiving WAGP applications or referring to designated branch?</div><div class="pill-group"><input type="radio" id="q4_yes" name="q_4" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q4_yes">✓ Yes</label><input type="radio" id="q4_no" name="q_4" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q4_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>5.</b> Did referral branch guide correctly about designated branch (if non-designated)?</div><div class="pill-group"><input type="radio" id="q5_yes" name="q_5" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q5_yes">✓ Yes</label><input type="radio" id="q5_no" name="q_5" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q5_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>6.</b> Is promotional/marketing material available (brochures, banners, standees, displays)?</div><div class="pill-group"><input type="radio" id="q6_yes" name="q_6" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q6_yes">✓ Yes</label><input type="radio" id="q6_no" name="q_6" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q6_no">✕ No</label></div></div>
       </div>
 
-      <!-- Section 2 -->
       <div class="card">
         <div class="card-title">Section 2: Staff Knowledge</div>
-
-        <div class="q-box">
-          <div class="q-title"><b>7.</b> Did the staff know about the WAGP scheme?</div>
-          <div class="pill-group">
-            <input type="radio" id="q7_yes" name="q_7" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q7_yes">✓ Yes</label>
-            <input type="radio" id="q7_no" name="q_7" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q7_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>8.</b> Could the official explain the basic features of the scheme?</div>
-          <div class="pill-group">
-            <input type="radio" id="q8_yes" name="q_8" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q8_yes">✓ Yes</label>
-            <input type="radio" id="q8_no" name="q_8" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q8_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>9.</b> Did the staff know the eligibility criteria for WAGP?</div>
-          <div class="pill-group">
-            <input type="radio" id="q9_yes" name="q_9" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q9_yes">✓ Yes</label>
-            <input type="radio" id="q9_no" name="q_9" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q9_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>10.</b> Did the staff know the required documents for processing an application?</div>
-          <div class="pill-group">
-            <input type="radio" id="q10_yes" name="q_10" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q10_yes">✓ Yes</label>
-            <input type="radio" id="q10_no" name="q_10" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q10_no">✕ No</label>
-          </div>
-        </div>
-
-        <div class="q-box">
-          <div class="q-title"><b>11.</b> Did the branch provide timelines for application processing?</div>
-          <div class="pill-group">
-            <input type="radio" id="q11_yes" name="q_11" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q11_yes">✓ Yes</label>
-            <input type="radio" id="q11_no" name="q_11" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q11_no">✕ No</label>
-          </div>
-        </div>
+        <div class="q-box"><div class="q-title"><b>7.</b> Did the staff know about the WAGP scheme?</div><div class="pill-group"><input type="radio" id="q7_yes" name="q_7" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q7_yes">✓ Yes</label><input type="radio" id="q7_no" name="q_7" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q7_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>8.</b> Could the official explain the basic features of the scheme?</div><div class="pill-group"><input type="radio" id="q8_yes" name="q_8" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q8_yes">✓ Yes</label><input type="radio" id="q8_no" name="q_8" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q8_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>9.</b> Did the staff know the eligibility criteria for WAGP?</div><div class="pill-group"><input type="radio" id="q9_yes" name="q_9" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q9_yes">✓ Yes</label><input type="radio" id="q9_no" name="q_9" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q9_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>10.</b> Did the staff know the required documents for processing an application?</div><div class="pill-group"><input type="radio" id="q10_yes" name="q_10" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q10_yes">✓ Yes</label><input type="radio" id="q10_no" name="q_10" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q10_no">✕ No</label></div></div>
+        <div class="q-box"><div class="q-title"><b>11.</b> Did the branch provide timelines for application processing?</div><div class="pill-group"><input type="radio" id="q11_yes" name="q_11" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q11_yes">✓ Yes</label><input type="radio" id="q11_no" name="q_11" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q11_no">✕ No</label></div></div>
       </div>
 
-      <!-- Section 3 -->
       <div class="card">
         <div class="card-title">Section 3: Customer Service & Behavior</div>
-
-        <div class="q-box">
-          <div class="q-title"><b>12.</b> Was branch staff polite, cooperative, and guided properly on submission process?</div>
-          <div class="pill-group">
-            <input type="radio" id="q12_yes" name="q_12" value="Yes" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q12_yes">✓ Yes</label>
-            <input type="radio" id="q12_no" name="q_12" value="No" onchange="updateLiveScore()" required />
-            <label class="pill-label" for="q12_no">✕ No</label>
-          </div>
-        </div>
+        <div class="q-box"><div class="q-title"><b>12.</b> Was branch staff polite, cooperative, and guided properly?</div><div class="pill-group"><input type="radio" id="q12_yes" name="q_12" value="Yes" onchange="updateLiveScore()" required /><label class="pill-label" for="q12_yes">✓ Yes</label><input type="radio" id="q12_no" name="q_12" value="No" onchange="updateLiveScore()" required /><label class="pill-label" for="q12_no">✕ No</label></div></div>
       </div>
 
       <button type="submit" class="btn btn-submit">Save Branch Audit</button>
-    </form>
-
-    <!-- Multi-Option Export Section -->
-        <div class="card" style="margin-top: 18px;">
+    </form>    <div class="card" style="margin-top: 18px;">
       <div class="card-title">Excel Reports & Filters</div>
       <div style="font-size: 12.5px; color: #555; margin-bottom: 12px;" id="recordCounterText">Stored Branch Records: 0</div>
 
@@ -403,14 +231,8 @@
       </div>
 
       <div id="dateRangeBox" style="display: none;" class="row-2">
-        <div class="field">
-          <label>From Date</label>
-          <input type="date" id="exportFromDate" />
-        </div>
-        <div class="field">
-          <label>To Date</label>
-          <input type="date" id="exportToDate" />
-        </div>
+        <div class="field"><label>From Date</label><input type="date" id="exportFromDate" /></div>
+        <div class="field"><label>To Date</label><input type="date" id="exportToDate" /></div>
       </div>
 
       <div id="lastNBox" style="display: none;" class="field">
@@ -418,7 +240,7 @@
         <input type="number" id="exportLastNCount" placeholder="e.g. 5" min="1" />
       </div>
 
-      <button type="button" class="btn btn-excel" onclick="exportExcelFile()">Download Excel File (.xls)</button>
+      <button type="button" class="btn btn-excel" onclick="exportExcelFile()">Download / Share Excel File (.xls)</button>
       <button type="button" class="btn btn-clipboard" onclick="copyRecordsToClipboard()">Copy Summary to Clipboard (Paste in Excel)</button>
       <button type="button" class="btn btn-clear" onclick="clearAllData()">Reset & Clear Saved Records</button>
     </div>
@@ -437,45 +259,22 @@
     }
 
     function calculateScore() {
-      let totalYes = 0;
-      let totalAnswered = 0;
-      let fatalNo = false;
-
+      let totalYes = 0, totalAnswered = 0, fatalNo = false;
       for (let i = 1; i <= 12; i++) {
         const checked = document.querySelector('input[name="q_' + i + '"]:checked');
         if (checked) {
           totalAnswered++;
-          if (checked.value === 'Yes') {
-            totalYes++;
-          } else if (i <= 5) {
-            fatalNo = true;
-          }
+          if (checked.value === 'Yes') totalYes++;
+          else if (i <= 5) fatalNo = true;
         }
       }
-
-      let rating = totalYes;
-      let assessment = "Pending";
-      let badgeColor = "#757575";
-
-      if (fatalNo) {
-        assessment = "Poor";
-        badgeColor = "var(--danger)";
-      } else if (totalAnswered === 12) {
-        if (rating >= 11) {
-          assessment = "Good";
-          badgeColor = "var(--success)";
-        } else if (rating >= 8) {
-          assessment = "Satisfactory";
-          badgeColor = "var(--accent)";
-        } else {
-          assessment = "Below Expectations";
-          badgeColor = "var(--warning)";
-        }
-      } else if (totalAnswered > 0) {
-        assessment = "In Progress";
-        badgeColor = "#0288d1";
-      }
-
+      let rating = totalYes, assessment = "Pending", badgeColor = "#757575";
+      if (fatalNo) { assessment = "Poor"; badgeColor = "var(--danger)"; }
+      else if (totalAnswered === 12) {
+        if (rating >= 11) { assessment = "Good"; badgeColor = "var(--success)"; }
+        else if (rating >= 8) { assessment = "Satisfactory"; badgeColor = "var(--accent)"; }
+        else { assessment = "Below Expectations"; badgeColor = "var(--warning)"; }
+      } else if (totalAnswered > 0) { assessment = "In Progress"; badgeColor = "#0288d1"; }
       return { totalYes, totalAnswered, fatalNo, rating, assessment, badgeColor };
     }
 
@@ -485,27 +284,18 @@
       const badge = document.getElementById("liveBadge");
       badge.innerText = s.assessment;
       badge.style.backgroundColor = s.badgeColor;
-
       const note = document.getElementById("liveStatusNote");
-      if (s.fatalNo) {
-        note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating";
-        note.style.color = "var(--danger)";
-      } else if (s.totalAnswered < 12) {
-        note.innerText = (12 - s.totalAnswered) + " questions remaining";
-        note.style.color = "#666";
-      } else {
-        note.innerText = "All questions evaluated";
-        note.style.color = "var(--success)";
-      }
+      if (s.fatalNo) { note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating"; note.style.color = "var(--danger)"; }
+      else if (s.totalAnswered < 12) { note.innerText = (12 - s.totalAnswered) + " questions remaining"; note.style.color = "#666"; }
+      else { note.innerText = "All questions evaluated"; note.style.color = "var(--success)"; }
     }
 
     function saveCredentials() {
-      const creds = {
+      localStorage.setItem("wagp_creds", JSON.stringify({
         office: document.getElementById("officeName").value,
         name: document.getElementById("officialName").value,
         pin: document.getElementById("pinNo").value
-      };
-      localStorage.setItem("wagp_creds", JSON.stringify(creds));
+      }));
     }
 
     function loadCredentials() {
@@ -516,27 +306,15 @@
     }
 
     function handleFormSubmit(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
+      if (e) { e.preventDefault(); e.stopPropagation(); }
       const selectedBank = document.getElementById("bankName").value;
-      if (!selectedBank) {
-        alert("Please select a bank from the dropdown.");
-        return false;
-      }
-
+      if (!selectedBank) { alert("Please select a bank from dropdown."); return false; }
       let userAnswers = {};
       for (let i = 1; i <= 12; i++) {
         const checked = document.querySelector('input[name="q_' + i + '"]:checked');
-        if (!checked) {
-          alert("Please answer question #" + i);
-          return false;
-        }
+        if (!checked) { alert("Please answer question #" + i); return false; }
         userAnswers[i] = checked.value;
       }
-
       const scoreInfo = calculateScore();
       const newRecord = {
         officeName: document.getElementById("officeName").value.trim(),
@@ -551,13 +329,10 @@
         answers: userAnswers,
         timestamp: new Date().getTime()
       };
-
       let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
       records.push(newRecord);
       localStorage.setItem("wagp_records", JSON.stringify(records));
-
-      alert("Branch visit saved successfully!\nRating: " + scoreInfo.rating + " | Assessment: " + scoreInfo.assessment);
-
+      alert("Branch visit saved!\nRating: " + scoreInfo.rating + " | Assessment: " + scoreInfo.assessment);
       document.getElementById("branchName").value = "";
       document.getElementById("branchAddress").value = "";
       document.getElementById("bankName").selectedIndex = 0;
@@ -565,7 +340,6 @@
         const checked = document.querySelector('input[name="q_' + i + '"]:checked');
         if (checked) checked.checked = false;
       }
-
       updateLiveScore();
       updateCounter();
       return false;
@@ -586,7 +360,6 @@
       let records = JSON.parse(localStorage.getItem("wagp_records") || "[]");
       const mode = document.getElementById("exportMode").value;
       let filtered = [...records];
-
       if (mode === "today") {
         const todayStr = new Date().toISOString().split("T")[0];
         filtered = filtered.filter(r => r.visitDate === todayStr);
@@ -602,120 +375,51 @@
       return filtered;
     }
 
-    function exportExcelFile() {
+    async function exportExcelFile() {
       const filtered = getFilteredRecords();
-      if (filtered.length === 0) {
-        alert("No inspection records available for this filter.");
-        return;
-      }
-
-      let xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>';
-      xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
-
-      xml += '<Worksheet ss:Name="Reporting Format"><Table>';
-      xml += '<Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Reporting Format</Data></Cell></Row>';
-      xml += '<Row>' +
-        '<Cell><Data ss:Type="String">Sr. #</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Office Name</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Name of Bank</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Name of Branch</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Branch Address</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Date of Visit</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Final Rating</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Assessment (Based on Rating)</Data></Cell>' +
-        '</Row>';
-
+      if (filtered.length === 0) { alert("No inspection records to export."); return; }
+      let xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+      xml += '<Worksheet ss:Name="Reporting Format"><Table><Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Reporting Format</Data></Cell></Row><Row><Cell><Data ss:Type="String">Sr. #</Data></Cell><Cell><Data ss:Type="String">Office Name</Data></Cell><Cell><Data ss:Type="String">Name of Bank</Data></Cell><Cell><Data ss:Type="String">Name of Branch</Data></Cell><Cell><Data ss:Type="String">Branch Address</Data></Cell><Cell><Data ss:Type="String">Date of Visit</Data></Cell><Cell><Data ss:Type="String">Final Rating</Data></Cell><Cell><Data ss:Type="String">Assessment (Based on Rating)</Data></Cell></Row>';
       filtered.forEach((r, idx) => {
-        xml += '<Row>' +
-          '<Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell>' +
-          '</Row>';
+        xml += '<Row><Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell><Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell></Row>';
       });
       xml += '</Table></Worksheet>';
-
-      xml += '<Worksheet ss:Name="Detailed Responses"><Table>';
-      xml += '<Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Detailed Questionnaire Responses</Data></Cell></Row>';
-      xml += '<Row>' +
-        '<Cell><Data ss:Type="String">Sr. #</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Office Name</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Official Name</Data></Cell>' +
-        '<Cell><Data ss:Type="String">PIN No.</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Name of Bank</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Name of Branch</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Branch Address</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Date of Visit</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q1: Salaried LAF</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q2: Business LAF</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q3: Informal LAF</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q4: Application Handling</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q5: Referral Guidance</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q6: Marketing Material</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q7: Staff Knowledge</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q8: Basic Features</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q9: Eligibility Knowledge</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q10: Document Checklist</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q11: Timelines Provided</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Q12: Customer Service</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Final Rating</Data></Cell>' +
-        '<Cell><Data ss:Type="String">Assessment</Data></Cell>' +
-        '</Row>';
-
+      xml += '<Worksheet ss:Name="Detailed Responses"><Table><Row><Cell><Data ss:Type="String">WAGP Mystery Shopping - Detailed Responses</Data></Cell></Row><Row><Cell><Data ss:Type="String">Sr. #</Data></Cell><Cell><Data ss:Type="String">Office Name</Data></Cell><Cell><Data ss:Type="String">Official Name</Data></Cell><Cell><Data ss:Type="String">PIN No.</Data></Cell><Cell><Data ss:Type="String">Name of Bank</Data></Cell><Cell><Data ss:Type="String">Name of Branch</Data></Cell><Cell><Data ss:Type="String">Branch Address</Data></Cell><Cell><Data ss:Type="String">Date of Visit</Data></Cell><Cell><Data ss:Type="String">Q1</Data></Cell><Cell><Data ss:Type="String">Q2</Data></Cell><Cell><Data ss:Type="String">Q3</Data></Cell><Cell><Data ss:Type="String">Q4</Data></Cell><Cell><Data ss:Type="String">Q5</Data></Cell><Cell><Data ss:Type="String">Q6</Data></Cell><Cell><Data ss:Type="String">Q7</Data></Cell><Cell><Data ss:Type="String">Q8</Data></Cell><Cell><Data ss:Type="String">Q9</Data></Cell><Cell><Data ss:Type="String">Q10</Data></Cell><Cell><Data ss:Type="String">Q11</Data></Cell><Cell><Data ss:Type="String">Q12</Data></Cell><Cell><Data ss:Type="String">Final Rating</Data></Cell><Cell><Data ss:Type="String">Assessment</Data></Cell></Row>';
       filtered.forEach((r, idx) => {
-        xml += '<Row>' +
-          '<Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.officialName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.pinNo || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell>';
-        for (let i = 1; i <= 12; i++) {
-          xml += '<Cell><Data ss:Type="String">' + (r.answers[i] || '-') + '</Data></Cell>';
-        }
-        xml += '<Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell>' +
-          '<Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell>' +
-          '</Row>';
+        xml += '<Row><Cell><Data ss:Type="Number">' + (idx + 1) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officeName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.officialName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.pinNo || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.bankName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchName || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.branchAddress || '') + '</Data></Cell><Cell><Data ss:Type="String">' + (r.visitDate || '') + '</Data></Cell>';
+        for (let i = 1; i <= 12; i++) { xml += '<Cell><Data ss:Type="String">' + (r.answers[i] || '-') + '</Data></Cell>'; }
+        xml += '<Cell><Data ss:Type="Number">' + (r.finalRating || 0) + '</Data></Cell><Cell><Data ss:Type="String">' + (r.assessment || '') + '</Data></Cell></Row>';
       });
       xml += '</Table></Worksheet></Workbook>';
 
       const filename = "WAGP_Report_" + new Date().toISOString().split("T")[0] + ".xls";
+      const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+      try {
+        const file = new File([blob], filename, { type: 'application/vnd.ms-excel' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'WAGP Mystery Shopping Report' });
+          return;
+        }
+      } catch (err) {}
       const uri = 'data:application/vnd.ms-excel;base64,' + window.btoa(unescape(encodeURIComponent(xml)));
       const downloadLink = document.createElement("a");
-      downloadLink.href = uri;
-      downloadLink.download = filename;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      downloadLink.href = uri; downloadLink.download = filename;
+      document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink);
     }
 
     function copyRecordsToClipboard() {
       const records = getFilteredRecords();
-      if (records.length === 0) {
-        alert("No records to copy.");
-        return;
-      }
+      if (records.length === 0) { alert("No records to copy."); return; }
       let tsv = "Sr. #\tOffice Name\tName of Bank\tName of Branch\tBranch Address\tDate of Visit\tFinal Rating\tAssessment\n";
       records.forEach((r, idx) => {
         tsv += (idx + 1) + "\t" + r.officeName + "\t" + r.bankName + "\t" + r.branchName + "\t" + r.branchAddress + "\t" + r.visitDate + "\t" + r.finalRating + "\t" + r.assessment + "\n";
       });
-      navigator.clipboard.writeText(tsv).then(() => {
-        alert("Summary copied to clipboard! Open Excel or Google Sheets and tap Paste.");
-      }).catch(() => {
-        alert("Clipboard permission needed.");
-      });
+      navigator.clipboard.writeText(tsv).then(() => { alert("Summary copied to clipboard! Open Excel and tap Paste."); });
     }
 
     function clearAllData() {
-      if (confirm("Permanently clear saved visits? Make sure you have exported first.")) {
-        localStorage.removeItem("wagp_records");
-        updateCounter();
+      if (confirm("Permanently clear saved visits?")) {
+        localStorage.removeItem("wagp_records"); updateCounter();
       }
     }
 
