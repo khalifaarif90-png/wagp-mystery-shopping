@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>WAGP Mystery Shopping Toolkit</title>
-  <!-- SheetJS Library -->
-  <script src="xlsx.full.min.js"></script>
   <style>
     :root {
       --primary: #0a3d34;
@@ -22,39 +20,38 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg); margin: 0; padding: 0; color: var(--text); }
 
-    /* Animated Splash Screen */
+    /* Splash Screen Overlay */
     #splashScreen {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
       display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-      padding: 60px 24px 40px; z-index: 99999; text-align: center;
+      padding: 50px 24px 30px; z-index: 99999; text-align: center;
     }
-    .splash-content { margin-top: 10vh; }
+    .splash-content { margin-top: 8vh; }
     .splash-logo-ring {
-      width: 84px; height: 84px; margin: 0 auto 20px; border-radius: 50%;
+      width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 50%;
       background: rgba(255,255,255,0.08); border: 2px solid var(--gold);
-      display: flex; align-items: center; justify-content: center; font-size: 38px;
+      display: flex; align-items: center; justify-content: center; font-size: 34px;
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
     }
     .splash-title {
-      font-size: 26px; font-weight: 800; line-height: 1.3;
+      font-size: 25px; font-weight: 800; line-height: 1.3;
       background: linear-gradient(45deg, #ffffff, #80e8d4, #ffd700);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
     }
-    .splash-sub { color: #cfded9; font-size: 15px; font-weight: 500; letter-spacing: 0.5px; }
+    .splash-sub { color: #cfded9; font-size: 15px; font-weight: 500; }
     .splash-btn {
       margin-top: 35px; background: linear-gradient(90deg, #00897b, #00bfa5); color: #fff;
       border: none; padding: 15px 44px; font-size: 16px; font-weight: 700;
       border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
-      display: inline-block;
     }
-    .splash-btn:active { transform: scale(0.96); }
+    .splash-btn:active { opacity: 0.8; transform: scale(0.98); }
     .splash-footer { margin-bottom: 10px; }
     .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
     .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
 
-    /* Main App Container */
-    #appContent { display: none; padding: 14px; max-width: 600px; margin: 0 auto 80px; }
+    /* Main App Body */
+    #appContent { padding: 14px; max-width: 600px; margin: 0 auto 80px; }
     .app-bar {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: #fff; padding: 16px; border-radius: 14px; margin-bottom: 12px;
@@ -63,7 +60,7 @@
     .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
     .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
 
-    /* Live Score Bar */
+    /* Sticky Rating Banner */
     .live-chip-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 14px; }
     .live-chip {
       background: #ffffff; border-radius: 12px; padding: 10px 14px;
@@ -87,7 +84,7 @@
     }
     .saved-badge { font-size: 10px; background: #e0f2f1; color: var(--accent); padding: 2px 8px; border-radius: 10px; }
 
-    /* Form Fields */
+    /* Fields */
     .field { margin-bottom: 11px; }
     .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
     .field input, .field select {
@@ -104,7 +101,7 @@
       display: flex; justify-content: space-between; align-items: center;
     }
 
-    /* Question Segmented Toggles */
+    /* Toggles */
     .q-box { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .q-box:last-child { border-bottom: none; }
     .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
@@ -131,7 +128,7 @@
     /* Bank Modal */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); z-index: 10000; justify-content: center; align-items: flex-end;
+      background: rgba(0,0,0,0.6); z-index: 100000; justify-content: center; align-items: flex-end;
     }
     .modal-sheet {
       background: #fff; width: 100%; max-height: 80vh; border-radius: 20px 20px 0 0;
@@ -150,13 +147,13 @@
 </head>
 <body>
 
-  <!-- Splash Screen -->
+  <!-- Splash Screen: Inline JS guarantees it ALWAYS dismisses when tapped -->
   <div id="splashScreen">
     <div class="splash-content">
       <div class="splash-logo-ring">🏛️</div>
       <div class="splash-title">Mystery Shopping<br/>Toolkit</div>
       <div class="splash-sub">SBP BSC Bahawalpur</div>
-      <button type="button" class="splash-btn" id="startBtn">Start Evaluation ➔</button>
+      <button type="button" class="splash-btn" onclick="document.getElementById('splashScreen').style.display='none';">Start Evaluation ➔</button>
     </div>
     <div class="splash-footer">
       <p>Prepared & Designed by</p>
@@ -173,7 +170,7 @@
 
     <!-- Live Auto-Score Chip -->
     <div class="live-chip-container">
-      <div class="live-chip" id="liveScoreCard">
+      <div class="live-chip">
         <div>
           <div class="live-score" id="liveScoreText">Score: 0 / 12 Yes</div>
           <span style="font-size: 10.5px; color: #666;" id="liveStatusNote">Answer all questions</span>
@@ -182,7 +179,7 @@
       </div>
     </div>
 
-    <form id="auditForm">
+    <form id="auditForm" onsubmit="saveAudit(event)">
       <!-- Officer Profile (Auto Saved) -->
       <div class="card">
         <div class="card-title">
@@ -249,7 +246,7 @@
       <button type="submit" class="btn btn-submit">Save Branch Audit</button>
     </form>
 
-    <!-- Multi-Option Excel Export Section -->
+    <!-- Multi-Option Export Section -->
     <div class="card" style="margin-top: 18px;">
       <div class="card-title">Excel Reports & Filters</div>
       <div style="font-size: 12.5px; color: #555; margin-bottom: 12px;" id="recordCounterText">Stored Branch Records: 0</div>
@@ -280,7 +277,7 @@
         <input type="number" id="exportLastNCount" placeholder="e.g. 5" min="1" />
       </div>
 
-      <button type="button" class="btn btn-excel" onclick="handleExcelExport()">Generate Excel Workbook (2 Sheets)</button>
+      <button type="button" class="btn btn-excel" onclick="exportExcelFile()">Download Excel File (.xls / .csv)</button>
       <button type="button" class="btn btn-clipboard" onclick="copyRecordsToClipboard()">Copy Summary to Clipboard (Paste in Excel)</button>
       <button type="button" class="btn btn-clear" onclick="clearAllData()">Reset & Clear Saved Records</button>
     </div>
@@ -337,15 +334,6 @@
 
     let answers = {};
 
-    function startAppNow() {
-      const splash = document.getElementById("splashScreen");
-      const app = document.getElementById("appContent");
-      if (splash) splash.style.display = "none";
-      if (app) app.style.display = "block";
-    }
-
-    document.getElementById("startBtn").addEventListener("click", startAppNow);
-
     function initQuestions() {
       questions.forEach(q => {
         const container = document.getElementById("section" + q.sec + "Container");
@@ -365,8 +353,8 @@
 
     function setAnswer(qid, val) {
       answers[qid] = val;
-      const btnYes = document.getElementById(`btn_yes_${qid}`);
-      const btnNo = document.getElementById(`btn_no_${qid}`);
+      const btnYes = document.getElementById("btn_yes_" + qid);
+      const btnNo = document.getElementById("btn_no_" + qid);
       if (val === 'Yes') {
         btnYes.className = 'pill-btn active-yes';
         btnNo.className = 'pill-btn';
@@ -422,18 +410,18 @@
     }
 
     function updateLiveScore() {
-      const { rating, totalAnswered, fatalNo, assessment, badgeColor } = calculateScore();
-      document.getElementById("liveScoreText").innerText = `Score: ${rating} / 12 Yes`;
+      const s = calculateScore();
+      document.getElementById("liveScoreText").innerText = "Score: " + s.rating + " / 12 Yes";
       const badge = document.getElementById("liveBadge");
-      badge.innerText = assessment;
-      badge.style.backgroundColor = badgeColor;
+      badge.innerText = s.assessment;
+      badge.style.backgroundColor = s.badgeColor;
 
       const note = document.getElementById("liveStatusNote");
-      if (fatalNo) {
+      if (s.fatalNo) {
         note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating";
         note.style.color = "var(--danger)";
-      } else if (totalAnswered < 12) {
-        note.innerText = `${12 - totalAnswered} questions remaining`;
+      } else if (s.totalAnswered < 12) {
+        note.innerText = (12 - s.totalAnswered) + " questions remaining";
         note.style.color = "#666";
       } else {
         note.innerText = "All questions evaluated";
@@ -467,4 +455,14 @@
     function renderBankList(list) {
       const container = document.getElementById("bankList");
       container.innerHTML = "";
-      li
+      list.forEach(b => {
+        const item = document.createElement("div");
+        item.className = "bank-item";
+        item.innerText = b;
+        item.onclick = () => selectBank(b);
+        container.appendChild(item);
+      });
+    }
+    function filterBanks() {
+      const term = document.getElementById("bankSearch").value.toLowerCase();
+      const filtered = banks.filter(b => b.toLowerCase().include
