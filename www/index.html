@@ -20,14 +20,14 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg); margin: 0; padding: 0; color: var(--text); }
 
-    /* Splash Screen Overlay */
+    /* Splash Screen */
     #splashScreen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
       display: flex; flex-direction: column; justify-content: space-between; align-items: center;
       padding: 50px 24px 30px; z-index: 99999; text-align: center;
     }
-    .splash-content { margin-top: 8vh; }
+    .splash-content { margin-top: 10vh; }
     .splash-logo-ring {
       width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 50%;
       background: rgba(255,255,255,0.08); border: 2px solid var(--gold);
@@ -45,12 +45,11 @@
       border: none; padding: 15px 44px; font-size: 16px; font-weight: 700;
       border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
     }
-    .splash-btn:active { opacity: 0.8; transform: scale(0.98); }
     .splash-footer { margin-bottom: 10px; }
     .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
     .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
 
-    /* Main App Body */
+    /* App Container */
     #appContent { padding: 14px; max-width: 600px; margin: 0 auto 80px; }
     .app-bar {
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
@@ -60,7 +59,7 @@
     .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
     .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
 
-    /* Sticky Rating Banner */
+    /* Live Score Bar */
     .live-chip-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 14px; }
     .live-chip {
       background: #ffffff; border-radius: 12px; padding: 10px 14px;
@@ -84,24 +83,18 @@
     }
     .saved-badge { font-size: 10px; background: #e0f2f1; color: var(--accent); padding: 2px 8px; border-radius: 10px; }
 
-    /* Fields */
+    /* Form Fields */
     .field { margin-bottom: 11px; }
     .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
     .field input, .field select {
-      width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #e0e0e0;
-      border-radius: 8px; background: #fafafa; outline: none;
+      width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #dcdcdc;
+      border-radius: 8px; background: #fafafa; outline: none; -webkit-appearance: menulist;
     }
     .field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
     .row-2 { display: flex; gap: 10px; }
     .row-2 .field { flex: 1; }
 
-    .bank-trigger {
-      width: 100%; padding: 11px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px;
-      background: #fafafa; font-size: 13.5px; text-align: left; cursor: pointer;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-
-    /* Toggles */
+    /* Questions & Buttons */
     .q-box { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .q-box:last-child { border-bottom: none; }
     .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
@@ -109,7 +102,7 @@
     .pill-btn {
       flex: 1; padding: 10px 0; text-align: center; border-radius: 8px;
       border: 1.5px solid #dcdcdc; background: #fff; font-size: 13px;
-      font-weight: 600; cursor: pointer;
+      font-weight: 600; cursor: pointer; user-select: none;
     }
     .pill-btn.active-yes { background: var(--success); color: #fff; border-color: var(--success); }
     .pill-btn.active-no { background: var(--danger); color: #fff; border-color: var(--danger); }
@@ -124,30 +117,11 @@
     .btn-excel { background: #1b5e20; color: #fff; margin-bottom: 8px; }
     .btn-clipboard { background: #0277bd; color: #fff; margin-bottom: 8px; }
     .btn-clear { background: #eceff1; color: #455a64; font-weight: 600; }
-
-    /* Bank Modal */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); z-index: 100000; justify-content: center; align-items: flex-end;
-    }
-    .modal-sheet {
-      background: #fff; width: 100%; max-height: 80vh; border-radius: 20px 20px 0 0;
-      padding: 18px 16px; display: flex; flex-direction: column;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .modal-header h3 { margin: 0; font-size: 16px; }
-    .bank-search-input {
-      padding: 10px 14px; border: 1.5px solid #ccc; border-radius: 8px;
-      font-size: 14px; width: 100%; margin-bottom: 12px;
-    }
-    .bank-list { overflow-y: auto; flex: 1; max-height: 55vh; }
-    .bank-item { padding: 12px 8px; border-bottom: 1px solid #f0f0f0; font-size: 13.5px; cursor: pointer; }
-    .bank-item:active { background: #e0f2f1; }
   </style>
 </head>
 <body>
 
-  <!-- Splash Screen: Inline JS guarantees it ALWAYS dismisses when tapped -->
+  <!-- Splash Screen -->
   <div id="splashScreen">
     <div class="splash-content">
       <div class="splash-logo-ring">🏛️</div>
@@ -211,11 +185,53 @@
         </div>
         <div class="field">
           <label>Name of Bank</label>
-          <div class="bank-trigger" onclick="openBankModal()">
-            <span id="selectedBankText" style="color:#757575;">Select Bank...</span>
-            <span>▾</span>
-          </div>
-          <input type="hidden" id="bankName" required />
+          <select id="bankName" required>
+            <option value="">-- Tap to Select Bank --</option>
+            <option value="Advans Pakistan Microfinance Bank Limited">Advans Pakistan Microfinance Bank Limited</option>
+            <option value="AlBaraka Bank (Pakistan) Limited">AlBaraka Bank (Pakistan) Limited</option>
+            <option value="Allied Bank Limited">Allied Bank Limited</option>
+            <option value="Apna Microfinance Bank Limited">Apna Microfinance Bank Limited</option>
+            <option value="Askari Bank Limited">Askari Bank Limited</option>
+            <option value="Bank AL Habib Limited">Bank AL Habib Limited</option>
+            <option value="Bank Alfalah Limited">Bank Alfalah Limited</option>
+            <option value="Bank of China Limited">Bank of China Limited</option>
+            <option value="Bank Makramah Limited">Bank Makramah Limited</option>
+            <option value="BankIslami Pakistan Limited">BankIslami Pakistan Limited</option>
+            <option value="Citibank N.A.">Citibank N.A.</option>
+            <option value="Deutsche Bank AG">Deutsche Bank AG</option>
+            <option value="Dubai Islamic Bank Pakistan Limited">Dubai Islamic Bank Pakistan Limited</option>
+            <option value="Easypaisa Digital Bank Limited">Easypaisa Digital Bank Limited</option>
+            <option value="Faysal Bank Limited">Faysal Bank Limited</option>
+            <option value="FINCA Microfinance Bank Limited">FINCA Microfinance Bank Limited</option>
+            <option value="First Women Bank Limited">First Women Bank Limited</option>
+            <option value="Habib Bank Limited">Habib Bank Limited</option>
+            <option value="Habib Metropolitan Bank Limited">Habib Metropolitan Bank Limited</option>
+            <option value="HBL Microfinance Bank Limited">HBL Microfinance Bank Limited</option>
+            <option value="Industrial and Commercial Bank of China Limited">Industrial and Commercial Bank of China Limited</option>
+            <option value="JS Bank Limited">JS Bank Limited</option>
+            <option value="Khushhali Microfinance Bank Limited">Khushhali Microfinance Bank Limited</option>
+            <option value="Mashreq Digital Bank Limited">Mashreq Digital Bank Limited</option>
+            <option value="MCB Bank Limited">MCB Bank Limited</option>
+            <option value="MCB Islamic Bank Limited">MCB Islamic Bank Limited</option>
+            <option value="Meezan Bank Limited">Meezan Bank Limited</option>
+            <option value="Mobilink Microfinance Bank Limited">Mobilink Microfinance Bank Limited</option>
+            <option value="National Bank of Pakistan">National Bank of Pakistan</option>
+            <option value="NRSP Microfinance Bank Limited">NRSP Microfinance Bank Limited</option>
+            <option value="Pak Oman Microfinance Bank Limited">Pak Oman Microfinance Bank Limited</option>
+            <option value="Punjab Provincial Co-operative Bank Limited">Punjab Provincial Co-operative Bank Limited</option>
+            <option value="SAMBA Bank Limited">SAMBA Bank Limited</option>
+            <option value="Silkbank Limited">Silkbank Limited</option>
+            <option value="Sindh Bank Limited">Sindh Bank Limited</option>
+            <option value="Sindh Microfinance Bank Limited">Sindh Microfinance Bank Limited</option>
+            <option value="Soneri Bank Limited">Soneri Bank Limited</option>
+            <option value="Standard Chartered Bank (Pakistan) Limited">Standard Chartered Bank (Pakistan) Limited</option>
+            <option value="Telenor Microfinance Bank Limited">Telenor Microfinance Bank Limited</option>
+            <option value="The Bank of Khyber">The Bank of Khyber</option>
+            <option value="The Bank of Punjab">The Bank of Punjab</option>
+            <option value="U Microfinance Bank Limited">U Microfinance Bank Limited</option>
+            <option value="United Bank Limited">United Bank Limited</option>
+            <option value="Zarai Taraqiati Bank Limited">Zarai Taraqiati Bank Limited</option>
+          </select>
         </div>
         <div class="field">
           <label>Branch Name & Code</label>
@@ -227,20 +243,115 @@
         </div>
       </div>
 
-      <!-- Questionnaire Sections -->
+      <!-- Section 1 -->
       <div class="card">
         <div class="card-title">Section 1: Branch Readiness</div>
-        <div id="section1Container"></div>
+        
+        <div class="q-box">
+          <div class="q-title"><b>1.</b> Are the Loan Application Forms (LAFs) available in the branch for salaried borrowers?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_1" onclick="setAnswer(1, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_1" onclick="setAnswer(1, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>2.</b> Are the LAFs available in the branch for formal business borrowers?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_2" onclick="setAnswer(2, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_2" onclick="setAnswer(2, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>3.</b> Are the LAFs available in the branch for informal income borrowers?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_3" onclick="setAnswer(3, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_3" onclick="setAnswer(3, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>4.</b> Either the branch itself receiving WAGP applications or referring to designated branch?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_4" onclick="setAnswer(4, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_4" onclick="setAnswer(4, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>5.</b> Did referral branch guide correctly about designated branch (if non-designated)?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_5" onclick="setAnswer(5, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_5" onclick="setAnswer(5, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>6.</b> Is promotional/marketing material available (brochures, banners, standees, displays)?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_6" onclick="setAnswer(6, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_6" onclick="setAnswer(6, 'No')">✕ No</div>
+          </div>
+        </div>
       </div>
 
+      <!-- Section 2 -->
       <div class="card">
         <div class="card-title">Section 2: Staff Knowledge</div>
-        <div id="section2Container"></div>
+
+        <div class="q-box">
+          <div class="q-title"><b>7.</b> Did the staff know about the WAGP scheme?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_7" onclick="setAnswer(7, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_7" onclick="setAnswer(7, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>8.</b> Could the official explain the basic features of the scheme?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_8" onclick="setAnswer(8, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_8" onclick="setAnswer(8, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>9.</b> Did the staff know the eligibility criteria for WAGP?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_9" onclick="setAnswer(9, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_9" onclick="setAnswer(9, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>10.</b> Did the staff know the required documents for processing an application?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_10" onclick="setAnswer(10, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_10" onclick="setAnswer(10, 'No')">✕ No</div>
+          </div>
+        </div>
+
+        <div class="q-box">
+          <div class="q-title"><b>11.</b> Did the branch provide timelines for application processing?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_11" onclick="setAnswer(11, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_11" onclick="setAnswer(11, 'No')">✕ No</div>
+          </div>
+        </div>
       </div>
 
+      <!-- Section 3 -->
       <div class="card">
         <div class="card-title">Section 3: Customer Service & Behavior</div>
-        <div id="section3Container"></div>
+
+        <div class="q-box">
+          <div class="q-title"><b>12.</b> Was branch staff polite, cooperative, and guided properly on submission process?</div>
+          <div class="pill-group">
+            <div class="pill-btn" id="btn_yes_12" onclick="setAnswer(12, 'Yes')">✓ Yes</div>
+            <div class="pill-btn" id="btn_no_12" onclick="setAnswer(12, 'No')">✕ No</div>
+          </div>
+        </div>
       </div>
 
       <button type="submit" class="btn btn-submit">Save Branch Audit</button>
@@ -283,73 +394,8 @@
     </div>
   </div>
 
-  <!-- Searchable Bank Selector Modal -->
-  <div class="modal" id="bankModal">
-    <div class="modal-sheet">
-      <div class="modal-header">
-        <h3>Select Bank</h3>
-        <span style="font-size: 20px; cursor: pointer;" onclick="closeBankModal()">✕</span>
-      </div>
-      <input type="text" class="bank-search-input" id="bankSearch" placeholder="Type bank name to search..." oninput="filterBanks()" />
-      <div class="bank-list" id="bankList"></div>
-    </div>
-  </div>
-
   <script>
-    const banks = [
-      "AlBaraka Bank (Pakistan) Limited", "Allied Bank Limited", "Askari Bank Limited",
-      "Bank AL Habib Limited", "Bank Alfalah Limited", "BankIslami Pakistan Limited",
-      "Dubai Islamic Bank Pakistan Limited", "Faysal Bank Limited", "First Women Bank Limited",
-      "Habib Bank Limited", "Habib Metropolitan Bank Limited", "JS Bank Limited",
-      "MCB Bank Limited", "MCB Islamic Bank Limited", "Meezan Bank Limited",
-      "National Bank of Pakistan", "SAMBA Bank Limited", "Silkbank Limited",
-      "Sindh Bank Limited", "Soneri Bank Limited", "Standard Chartered Bank (Pakistan) Limited",
-      "The Bank of Khyber", "The Bank of Punjab", "United Bank Limited",
-      "Bank Makramah Limited", "Citibank N.A.", "Deutsche Bank AG",
-      "Industrial and Commercial Bank of China Limited", "Bank of China Limited",
-      "Punjab Provincial Co-operative Bank Limited", "Zarai Taraqiati Bank Limited",
-      "Easypaisa Digital Bank Limited", "Mashreq Digital Bank Limited",
-      "Apna Microfinance Bank Limited", "Advans Pakistan Microfinance Bank Limited",
-      "FINCA Microfinance Bank Limited", "HBL Microfinance Bank Limited",
-      "Khushhali Microfinance Bank Limited", "Mobilink Microfinance Bank Limited",
-      "NRSP Microfinance Bank Limited", "Pak Oman Microfinance Bank Limited",
-      "Sindh Microfinance Bank Limited", "Telenor Microfinance Bank Limited",
-      "U Microfinance Bank Limited"
-    ];
-
-    const questions = [
-      { id: 1, sec: 1, text: "Are the LAFs available for salaried borrowers?" },
-      { id: 2, sec: 1, text: "Are the LAFs available for formal business borrowers?" },
-      { id: 3, sec: 1, text: "Are the LAFs available for informal income borrowers?" },
-      { id: 4, sec: 1, text: "Either branch itself receiving WAGP applications or referring to designated branch?" },
-      { id: 5, sec: 1, text: "Did referral branch guide correctly about designated branch (if non-designated)?" },
-      { id: 6, sec: 1, text: "Is promotional/marketing material available (brochures, banners, standees, digital displays)?" },
-      { id: 7, sec: 2, text: "Did the staff know about the WAGP scheme?" },
-      { id: 8, sec: 2, text: "Could the official explain the basic features of the scheme?" },
-      { id: 9, sec: 2, text: "Did the staff know the eligibility criteria for WAGP?" },
-      { id: 10, sec: 2, text: "Did the staff know the required documents for processing an application?" },
-      { id: 11, sec: 2, text: "Did the branch provide timelines for application processing?" },
-      { id: 12, sec: 3, text: "Was branch staff polite, cooperative, and guided properly on submission process?" }
-    ];
-
     let answers = {};
-
-    function initQuestions() {
-      questions.forEach(q => {
-        const container = document.getElementById("section" + q.sec + "Container");
-        if (!container) return;
-        const box = document.createElement("div");
-        box.className = "q-box";
-        box.innerHTML = `
-          <div class="q-title"><b>${q.id}.</b> ${q.text}</div>
-          <div class="pill-group">
-            <div class="pill-btn" id="btn_yes_${q.id}" onclick="setAnswer(${q.id}, 'Yes')">✓ Yes</div>
-            <div class="pill-btn" id="btn_no_${q.id}" onclick="setAnswer(${q.id}, 'No')">✕ No</div>
-          </div>
-        `;
-        container.appendChild(box);
-      });
-    }
 
     function setAnswer(qid, val) {
       answers[qid] = val;
@@ -368,101 +414,4 @@
     function calculateScore() {
       let totalYes = 0;
       let totalAnswered = 0;
-      for (let i = 1; i <= 12; i++) {
-        if (answers[i]) {
-          totalAnswered++;
-          if (answers[i] === 'Yes') totalYes++;
-        }
-      }
-
-      let fatalNo = false;
-      for (let i = 1; i <= 5; i++) {
-        if (answers[i] === 'No') {
-          fatalNo = true;
-          break;
-        }
-      }
-
-      let rating = totalYes;
-      let assessment = "Pending";
-      let badgeColor = "#757575";
-
-      if (fatalNo) {
-        assessment = "Poor";
-        badgeColor = "var(--danger)";
-      } else if (totalAnswered === 12) {
-        if (rating >= 11) {
-          assessment = "Good";
-          badgeColor = "var(--success)";
-        } else if (rating >= 8) {
-          assessment = "Satisfactory";
-          badgeColor = "var(--accent)";
-        } else {
-          assessment = "Below Expectations";
-          badgeColor = "var(--warning)";
-        }
-      } else if (totalAnswered > 0) {
-        assessment = "In Progress";
-        badgeColor = "#0288d1";
-      }
-
-      return { totalYes, totalAnswered, fatalNo, rating, assessment, badgeColor };
-    }
-
-    function updateLiveScore() {
-      const s = calculateScore();
-      document.getElementById("liveScoreText").innerText = "Score: " + s.rating + " / 12 Yes";
-      const badge = document.getElementById("liveBadge");
-      badge.innerText = s.assessment;
-      badge.style.backgroundColor = s.badgeColor;
-
-      const note = document.getElementById("liveStatusNote");
-      if (s.fatalNo) {
-        note.innerText = "Fatal: 'No' in Q1-Q5 triggers Poor Rating";
-        note.style.color = "var(--danger)";
-      } else if (s.totalAnswered < 12) {
-        note.innerText = (12 - s.totalAnswered) + " questions remaining";
-        note.style.color = "#666";
-      } else {
-        note.innerText = "All questions evaluated";
-        note.style.color = "var(--success)";
-      }
-    }
-
-    function saveCredentials() {
-      const creds = {
-        office: document.getElementById("officeName").value,
-        name: document.getElementById("officialName").value,
-        pin: document.getElementById("pinNo").value
-      };
-      localStorage.setItem("wagp_creds", JSON.stringify(creds));
-    }
-
-    function loadCredentials() {
-      const saved = JSON.parse(localStorage.getItem("wagp_creds") || "{}");
-      if (saved.office) document.getElementById("officeName").value = saved.office;
-      if (saved.name) document.getElementById("officialName").value = saved.name;
-      if (saved.pin) document.getElementById("pinNo").value = saved.pin;
-    }
-
-    function openBankModal() {
-      document.getElementById("bankModal").style.display = "flex";
-      renderBankList(banks);
-      document.getElementById("bankSearch").value = "";
-      document.getElementById("bankSearch").focus();
-    }
-    function closeBankModal() { document.getElementById("bankModal").style.display = "none"; }
-    function renderBankList(list) {
-      const container = document.getElementById("bankList");
-      container.innerHTML = "";
-      list.forEach(b => {
-        const item = document.createElement("div");
-        item.className = "bank-item";
-        item.innerText = b;
-        item.onclick = () => selectBank(b);
-        container.appendChild(item);
-      });
-    }
-    function filterBanks() {
-      const term = document.getElementById("bankSearch").value.toLowerCase();
-      const filtered = banks.filter(b => b.toLowerCase().include
+  
