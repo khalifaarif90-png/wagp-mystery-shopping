@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>WAGP Mystery Shopping Toolkit</title>
-  <!-- Local offline SheetJS engine -->
+  <!-- SheetJS Library -->
   <script src="xlsx.full.min.js"></script>
   <style>
     :root {
@@ -24,15 +24,14 @@
 
     /* Animated Splash Screen */
     #splashScreen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: linear-gradient(135deg, #042620 0%, #0a3d34 50%, #134e43 100%);
       display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-      padding: 50px 24px 30px; z-index: 9999; text-align: center;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      padding: 60px 24px 40px; z-index: 99999; text-align: center;
     }
-    .splash-content { margin-top: 15vh; animation: fadeInDown 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .splash-content { margin-top: 10vh; }
     .splash-logo-ring {
-      width: 86px; height: 86px; margin: 0 auto 20px; border-radius: 50%;
+      width: 84px; height: 84px; margin: 0 auto 20px; border-radius: 50%;
       background: rgba(255,255,255,0.08); border: 2px solid var(--gold);
       display: flex; align-items: center; justify-content: center; font-size: 38px;
       box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
@@ -45,10 +44,12 @@
     .splash-sub { color: #cfded9; font-size: 15px; font-weight: 500; letter-spacing: 0.5px; }
     .splash-btn {
       margin-top: 35px; background: linear-gradient(90deg, #00897b, #00bfa5); color: #fff;
-      border: none; padding: 14px 40px; font-size: 15px; font-weight: 700;
+      border: none; padding: 15px 44px; font-size: 16px; font-weight: 700;
       border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
+      display: inline-block;
     }
-    .splash-footer { animation: fadeInUp 1.2s ease; }
+    .splash-btn:active { transform: scale(0.96); }
+    .splash-footer { margin-bottom: 10px; }
     .splash-footer p { color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 4px; }
     .splash-footer h4 { color: var(--gold); font-size: 16px; margin: 0; font-weight: 700; letter-spacing: 0.8px; }
 
@@ -62,10 +63,8 @@
     .app-bar h1 { margin: 0; font-size: 17px; font-weight: 700; }
     .app-bar p { margin: 3px 0 0; font-size: 11.5px; opacity: 0.85; }
 
-    /* Live Floating Rating Bar */
-    .live-chip-container {
-      position: sticky; top: 10px; z-index: 100; margin-bottom: 14px;
-    }
+    /* Live Score Bar */
+    .live-chip-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 14px; }
     .live-chip {
       background: #ffffff; border-radius: 12px; padding: 10px 14px;
       display: flex; align-items: center; justify-content: space-between;
@@ -93,13 +92,12 @@
     .field label { display: block; font-size: 11.5px; font-weight: 600; color: #444; margin-bottom: 4px; }
     .field input, .field select {
       width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #e0e0e0;
-      border-radius: 8px; background: #fafafa; outline: none; transition: border-color 0.2s;
+      border-radius: 8px; background: #fafafa; outline: none;
     }
     .field input:focus, .field select:focus { border-color: var(--accent); background: #fff; }
     .row-2 { display: flex; gap: 10px; }
     .row-2 .field { flex: 1; }
 
-    /* Custom Bank Dropdown Selector */
     .bank-trigger {
       width: 100%; padding: 11px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px;
       background: #fafafa; font-size: 13.5px; text-align: left; cursor: pointer;
@@ -112,17 +110,17 @@
     .q-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; margin-bottom: 8px; color: #222; }
     .pill-group { display: flex; gap: 8px; }
     .pill-btn {
-      flex: 1; padding: 9px 0; text-align: center; border-radius: 8px;
+      flex: 1; padding: 10px 0; text-align: center; border-radius: 8px;
       border: 1.5px solid #dcdcdc; background: #fff; font-size: 13px;
-      font-weight: 600; cursor: pointer; transition: all 0.15s ease;
+      font-weight: 600; cursor: pointer;
     }
     .pill-btn.active-yes { background: var(--success); color: #fff; border-color: var(--success); }
     .pill-btn.active-no { background: var(--danger); color: #fff; border-color: var(--danger); }
 
-    /* Action Buttons */
+    /* Buttons */
     .btn {
       width: 100%; padding: 13px; border: none; border-radius: 10px;
-      font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
+      font-size: 14px; font-weight: 700; cursor: pointer;
     }
     .btn:active { transform: scale(0.98); }
     .btn-submit { background: linear-gradient(135deg, var(--accent), var(--primary-light)); color: #fff; margin-top: 10px; }
@@ -130,7 +128,7 @@
     .btn-clipboard { background: #0277bd; color: #fff; margin-bottom: 8px; }
     .btn-clear { background: #eceff1; color: #455a64; font-weight: 600; }
 
-    /* Bank Search Modal */
+    /* Bank Modal */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.6); z-index: 10000; justify-content: center; align-items: flex-end;
@@ -146,24 +144,19 @@
       font-size: 14px; width: 100%; margin-bottom: 12px;
     }
     .bank-list { overflow-y: auto; flex: 1; max-height: 55vh; }
-    .bank-item {
-      padding: 12px 8px; border-bottom: 1px solid #f0f0f0; font-size: 13.5px; cursor: pointer;
-    }
+    .bank-item { padding: 12px 8px; border-bottom: 1px solid #f0f0f0; font-size: 13.5px; cursor: pointer; }
     .bank-item:active { background: #e0f2f1; }
-
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <!-- Animated Splash Screen -->
+  <!-- Splash Screen -->
   <div id="splashScreen">
     <div class="splash-content">
       <div class="splash-logo-ring">🏛️</div>
       <div class="splash-title">Mystery Shopping<br/>Toolkit</div>
       <div class="splash-sub">SBP BSC Bahawalpur</div>
-      <button class="splash-btn" onclick="startApp()">Start Evaluation ➔</button>
+      <button type="button" class="splash-btn" id="startBtn">Start Evaluation ➔</button>
     </div>
     <div class="splash-footer">
       <p>Prepared & Designed by</p>
@@ -182,7 +175,7 @@
     <div class="live-chip-container">
       <div class="live-chip" id="liveScoreCard">
         <div>
-          <div class="live-score" id="liveScoreText">Score: 0 / 12</div>
+          <div class="live-score" id="liveScoreText">Score: 0 / 12 Yes</div>
           <span style="font-size: 10.5px; color: #666;" id="liveStatusNote">Answer all questions</span>
         </div>
         <div class="live-badge" id="liveBadge">Pending</div>
@@ -344,17 +337,19 @@
 
     let answers = {};
 
-    function startApp() {
-      document.getElementById("splashScreen").style.opacity = "0";
-      setTimeout(() => {
-        document.getElementById("splashScreen").style.display = "none";
-        document.getElementById("appContent").style.display = "block";
-      }, 500);
+    function startAppNow() {
+      const splash = document.getElementById("splashScreen");
+      const app = document.getElementById("appContent");
+      if (splash) splash.style.display = "none";
+      if (app) app.style.display = "block";
     }
+
+    document.getElementById("startBtn").addEventListener("click", startAppNow);
 
     function initQuestions() {
       questions.forEach(q => {
         const container = document.getElementById("section" + q.sec + "Container");
+        if (!container) return;
         const box = document.createElement("div");
         box.className = "q-box";
         box.innerHTML = `
@@ -372,7 +367,6 @@
       answers[qid] = val;
       const btnYes = document.getElementById(`btn_yes_${qid}`);
       const btnNo = document.getElementById(`btn_no_${qid}`);
-
       if (val === 'Yes') {
         btnYes.className = 'pill-btn active-yes';
         btnNo.className = 'pill-btn';
@@ -464,4 +458,13 @@
     }
 
     function openBankModal() {
-      document.getElementById("bankModal").s
+      document.getElementById("bankModal").style.display = "flex";
+      renderBankList(banks);
+      document.getElementById("bankSearch").value = "";
+      document.getElementById("bankSearch").focus();
+    }
+    function closeBankModal() { document.getElementById("bankModal").style.display = "none"; }
+    function renderBankList(list) {
+      const container = document.getElementById("bankList");
+      container.innerHTML = "";
+      li
